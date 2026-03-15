@@ -6,6 +6,7 @@ from leaguepedia_parser_thomasbarrepitous.site.leaguepedia import leaguepedia
 from leaguepedia_parser_thomasbarrepitous.transmuters.field_names import (
     scoreboard_players_fields,
 )
+from leaguepedia_parser_thomasbarrepitous.parsers.query_builder import QueryBuilder
 
 
 @dataclasses.dataclass
@@ -304,31 +305,25 @@ def get_scoreboard_players(
     try:
         where_conditions = []
 
-        if tournament:
-            escaped_tournament = tournament.replace("'", "''")
-            where_conditions.append(
-                f"ScoreboardPlayers.OverviewPage='{escaped_tournament}'"
-            )
+        # Build exact match conditions
+        exact_where = QueryBuilder.build_where(
+            "ScoreboardPlayers",
+            {
+                "OverviewPage": tournament,
+                "Team": team,
+                "Champion": champion,
+                "GameId": game_id,
+                "Role": role,
+            }
+        )
+        if exact_where:
+            where_conditions.append(exact_where)
 
+        # Build LIKE condition for player
         if player:
-            escaped_player = player.replace("'", "''")
-            where_conditions.append(f"ScoreboardPlayers.Link LIKE '%{escaped_player}%'")
-
-        if team:
-            escaped_team = team.replace("'", "''")
-            where_conditions.append(f"ScoreboardPlayers.Team='{escaped_team}'")
-
-        if champion:
-            escaped_champion = champion.replace("'", "''")
-            where_conditions.append(f"ScoreboardPlayers.Champion='{escaped_champion}'")
-
-        if game_id:
-            escaped_game_id = game_id.replace("'", "''")
-            where_conditions.append(f"ScoreboardPlayers.GameId='{escaped_game_id}'")
-
-        if role:
-            escaped_role = role.replace("'", "''")
-            where_conditions.append(f"ScoreboardPlayers.Role='{escaped_role}'")
+            where_conditions.append(
+                QueryBuilder.build_like_condition("ScoreboardPlayers", "Link", player)
+            )
 
         where_clause = " AND ".join(where_conditions) if where_conditions else None
 

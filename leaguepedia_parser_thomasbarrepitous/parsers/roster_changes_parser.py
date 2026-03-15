@@ -7,6 +7,7 @@ from leaguepedia_parser_thomasbarrepitous.site.leaguepedia import leaguepedia
 from leaguepedia_parser_thomasbarrepitous.transmuters.field_names import (
     roster_changes_fields,
 )
+from leaguepedia_parser_thomasbarrepitous.parsers.query_builder import QueryBuilder
 
 
 class RosterAction(enum.Enum):
@@ -194,29 +195,30 @@ def get_roster_changes(
     try:
         where_conditions = []
 
-        if team:
-            escaped_team = team.replace("'", "''")
-            where_conditions.append(f"RosterChanges.Team='{escaped_team}'")
+        # Build exact match conditions
+        exact_where = QueryBuilder.build_where(
+            "RosterChanges",
+            {
+                "Team": team,
+                "Player": player,
+                "Direction": action,
+            }
+        )
+        if exact_where:
+            where_conditions.append(exact_where)
 
-        if player:
-            escaped_player = player.replace("'", "''")
-            where_conditions.append(f"RosterChanges.Player='{escaped_player}'")
-
-        if action:
-            escaped_action = action.replace("'", "''")
-            where_conditions.append(f"RosterChanges.Direction='{escaped_action}'")
-
+        # Build LIKE condition for tournament
         if tournament:
-            escaped_tournament = tournament.replace("'", "''")
             where_conditions.append(
-                f"RosterChanges.Tournaments LIKE '%{escaped_tournament}%'"
+                QueryBuilder.build_like_condition("RosterChanges", "Tournaments", tournament)
             )
 
-        if start_date:
-            where_conditions.append(f"RosterChanges.Date_Sort >= '{start_date}'")
-
-        if end_date:
-            where_conditions.append(f"RosterChanges.Date_Sort <= '{end_date}'")
+        # Build date range conditions
+        date_range = QueryBuilder.build_range_condition(
+            "RosterChanges", "Date_Sort", min_value=f"'{start_date}'" if start_date else None, max_value=f"'{end_date}'" if end_date else None
+        )
+        if date_range:
+            where_conditions.append(date_range)
 
         where_clause = " AND ".join(where_conditions) if where_conditions else None
 

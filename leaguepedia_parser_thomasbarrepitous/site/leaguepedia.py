@@ -1,4 +1,8 @@
+import time
 from mwrogue.esports_client import EsportsClient
+from mwclient.errors import APIError
+
+from leaguepedia_parser_thomasbarrepitous.logger import leaguepedia_parser_logger as logger
 
 
 class LeaguepediaSite:
@@ -7,9 +11,11 @@ class LeaguepediaSite:
     Full documentation: https://lol.fandom.com/Help:API_Documentation
     """
 
-    def __init__(self, limit=500):
+    def __init__(self, limit=500, max_retries=5, base_wait_time=5):
         self._site = None
         self.limit = limit
+        self.max_retries = max_retries
+        self.base_wait_time = base_wait_time
 
     @property
     def site(self):
@@ -39,11 +45,26 @@ class LeaguepediaSite:
 
         # We check if we hit the API limit
         while len(result) % self.limit == 0:
-            result.extend(
-                self.site.cargo_client.query(
-                    limit=self.limit, offset=len(result), **kwargs
-                )
-            )
+            retry_count = 0
+
+            while retry_count < self.max_retries:
+                try:
+                    result.extend(
+                        self.site.cargo_client.query(
+                            limit=self.limit, offset=len(result), **kwargs
+                        )
+                    )
+                    break  # Success, exit retry loop
+
+                except APIError as e:
+                    if e.code == 'ratelimited' and retry_count < self.max_retries - 1:
+                        wait_time = self.base_wait_time * (2 ** retry_count)
+                        logger.warning(f"Rate limited by Leaguepedia API. Waiting {wait_time}s before retry {retry_count + 2}/{self.max_retries}...")
+                        time.sleep(wait_time)
+                        retry_count += 1
+                    else:
+                        # Either not a rate limit error, or we've exhausted retries
+                        raise
 
             # If the cargoquery is empty, we stop the loop
             if not result:

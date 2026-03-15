@@ -6,6 +6,7 @@ from leaguepedia_parser_thomasbarrepitous.site.leaguepedia import leaguepedia
 from leaguepedia_parser_thomasbarrepitous.transmuters.field_names import (
     contracts_fields,
 )
+from leaguepedia_parser_thomasbarrepitous.parsers.query_builder import QueryBuilder
 
 
 @dataclasses.dataclass
@@ -103,13 +104,16 @@ def get_contracts(
     try:
         where_conditions = []
 
-        if player:
-            escaped_player = player.replace("'", "''")
-            where_conditions.append(f"Contracts.Player='{escaped_player}'")
-
-        if team:
-            escaped_team = team.replace("'", "''")
-            where_conditions.append(f"Contracts.Team='{escaped_team}'")
+        # Build exact match conditions
+        exact_where = QueryBuilder.build_where(
+            "Contracts",
+            {
+                "Player": player,
+                "Team": team,
+            }
+        )
+        if exact_where:
+            where_conditions.append(exact_where)
 
         if not include_removals:
             where_conditions.append(
@@ -138,7 +142,7 @@ def get_contracts(
         )
 
         parsed_contracts = [_parse_contract_data(contract) for contract in contracts]
-        
+
         # Apply limit after parsing if specified
         return parsed_contracts[:limit] if limit else parsed_contracts
 
@@ -204,9 +208,10 @@ def get_expiring_contracts(
     try:
         where_conditions = []
 
-        if team:
-            escaped_team = team.replace("'", "''")
-            where_conditions.append(f"Contracts.Team='{escaped_team}'")
+        # Build team filter
+        team_where = QueryBuilder.build_where("Contracts", {"Team": team})
+        if team_where:
+            where_conditions.append(team_where)
 
         # Get contracts expiring within the specified days
         current_date = datetime.now().strftime("%Y-%m-%d")
@@ -215,8 +220,13 @@ def get_expiring_contracts(
         )
         end_date_str = datetime.fromtimestamp(end_date).strftime("%Y-%m-%d")
 
-        where_conditions.append(f"Contracts.ContractEnd >= '{current_date}'")
-        where_conditions.append(f"Contracts.ContractEnd <= '{end_date_str}'")
+        # Build date range condition
+        date_range = QueryBuilder.build_range_condition(
+            "Contracts", "ContractEnd", min_value=f"'{current_date}'", max_value=f"'{end_date_str}'"
+        )
+        if date_range:
+            where_conditions.append(date_range)
+
         where_conditions.append(
             "Contracts.IsRemoval IS NULL OR Contracts.IsRemoval='0'"
         )
@@ -253,13 +263,16 @@ def get_contract_removals(
     try:
         where_conditions = ["Contracts.IsRemoval='1'"]
 
-        if player:
-            escaped_player = player.replace("'", "''")
-            where_conditions.append(f"Contracts.Player='{escaped_player}'")
-
-        if team:
-            escaped_team = team.replace("'", "''")
-            where_conditions.append(f"Contracts.Team='{escaped_team}'")
+        # Build player and team filters
+        filters_where = QueryBuilder.build_where(
+            "Contracts",
+            {
+                "Player": player,
+                "Team": team,
+            }
+        )
+        if filters_where:
+            where_conditions.append(filters_where)
 
         where_clause = " AND ".join(where_conditions)
 

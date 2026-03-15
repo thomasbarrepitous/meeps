@@ -6,6 +6,7 @@ from leaguepedia_parser_thomasbarrepitous.site.leaguepedia import leaguepedia
 from leaguepedia_parser_thomasbarrepitous.transmuters.field_names import (
     champions_fields,
 )
+from leaguepedia_parser_thomasbarrepitous.parsers.query_builder import QueryBuilder
 
 
 @dataclasses.dataclass
@@ -169,14 +170,15 @@ def get_champions(
     try:
         where_conditions = []
 
-        if resource:
-            escaped_resource = resource.replace("'", "''")
-            where_conditions.append(f"Champions.Resource='{escaped_resource}'")
+        # Build exact match condition for resource
+        resource_where = QueryBuilder.build_where("Champions", {"Resource": resource})
+        if resource_where:
+            where_conditions.append(resource_where)
 
+        # Build LIKE condition for attributes
         if attributes:
-            escaped_attributes = attributes.replace("'", "''")
             where_conditions.append(
-                f"Champions.Attributes LIKE '%{escaped_attributes}%'"
+                QueryBuilder.build_like_condition("Champions", "Attributes", attributes)
             )
 
         where_clause = " AND ".join(where_conditions) if where_conditions else None
@@ -208,11 +210,12 @@ def get_champion_by_name(champion_name: str) -> Optional[Champion]:
         RuntimeError: If the Leaguepedia query fails
     """
     try:
-        escaped_name = champion_name.replace("'", "''")
+        where_clause = QueryBuilder.build_where("Champions", {"Name": champion_name})
+
         champions = leaguepedia.query(
             tables="Champions",
             fields=",".join(champions_fields),
-            where=f"Champions.Name='{escaped_name}'",
+            where=where_clause,
         )
 
         return _parse_champion_data(champions[0]) if champions else None

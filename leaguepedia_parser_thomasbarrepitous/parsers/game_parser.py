@@ -20,6 +20,7 @@ from leaguepedia_parser_thomasbarrepitous.transmuters.tournament import (
     transmute_tournament,
     LeaguepediaTournament,
 )
+from leaguepedia_parser_thomasbarrepitous.parsers.query_builder import QueryBuilder
 
 
 def get_regions() -> List[str]:
@@ -60,21 +61,16 @@ def get_tournaments(
     if is_playoffs is not None:
         is_playoffs = 1 if is_playoffs else 0
 
-    # This generates the WHERE part of the cargoquery
-    where_conditions = []
-    for field_name, value in [
-        ("Region", region),
-        ("Year", year),
-        ("TournamentLevel", tournament_level),
-        ("IsPlayoffs", is_playoffs),
-    ]:
-        # We don't filter on variables that are None
-        if value is not None:
-            # Escape single quotes by doubling them to prevent SQL injection
-            escaped_value = str(value).replace("'", "''")
-            where_conditions.append(f"Tournaments.{field_name}='{escaped_value}'")
-
-    where = " AND ".join(where_conditions)
+    # Build WHERE clause using QueryBuilder
+    where = QueryBuilder.build_where(
+        "Tournaments",
+        {
+            "Region": region,
+            "Year": year,
+            "TournamentLevel": tournament_level,
+            "IsPlayoffs": is_playoffs,
+        }
+    )
 
     result = leaguepedia.query(
         tables="Tournaments, Leagues",

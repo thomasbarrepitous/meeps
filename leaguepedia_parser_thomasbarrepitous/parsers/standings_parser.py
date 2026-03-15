@@ -5,6 +5,7 @@ from leaguepedia_parser_thomasbarrepitous.site.leaguepedia import leaguepedia
 from leaguepedia_parser_thomasbarrepitous.transmuters.field_names import (
     standings_fields,
 )
+from leaguepedia_parser_thomasbarrepitous.parsers.query_builder import QueryBuilder
 
 
 @dataclasses.dataclass
@@ -133,17 +134,13 @@ def get_standings(
         RuntimeError: If the Leaguepedia query fails
     """
     try:
-        where_conditions = []
-
-        if overview_page:
-            escaped_overview_page = overview_page.replace("'", "''")
-            where_conditions.append(f"Standings.OverviewPage='{escaped_overview_page}'")
-
-        if team:
-            escaped_team = team.replace("'", "''")
-            where_conditions.append(f"Standings.Team='{escaped_team}'")
-
-        where_clause = " AND ".join(where_conditions) if where_conditions else None
+        where_clause = QueryBuilder.build_where(
+            "Standings",
+            {
+                "OverviewPage": overview_page,
+                "Team": team,
+            }
+        )
 
         standings = leaguepedia.query(
             tables="Standings",

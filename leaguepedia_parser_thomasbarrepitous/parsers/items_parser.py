@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from leaguepedia_parser_thomasbarrepitous.site.leaguepedia import leaguepedia
 from leaguepedia_parser_thomasbarrepitous.transmuters.field_names import items_fields
+from leaguepedia_parser_thomasbarrepitous.parsers.query_builder import QueryBuilder
 
 
 @dataclasses.dataclass
@@ -201,13 +202,7 @@ def get_items(
         RuntimeError: If the Leaguepedia query fails
     """
     try:
-        where_conditions = []
-
-        if tier:
-            escaped_tier = tier.replace("'", "''")
-            where_conditions.append(f"Items.Tier='{escaped_tier}'")
-
-        where_clause = " AND ".join(where_conditions) if where_conditions else None
+        where_clause = QueryBuilder.build_where("Items", {"Tier": tier})
 
         items = leaguepedia.query(
             tables="Items",
@@ -236,11 +231,12 @@ def get_item_by_name(item_name: str) -> Optional[Item]:
         RuntimeError: If the Leaguepedia query fails
     """
     try:
-        escaped_name = item_name.replace("'", "''")
+        where_clause = QueryBuilder.build_where("Items", {"Name": item_name})
+
         items = leaguepedia.query(
             tables="Items",
             fields=",".join(items_fields),
-            where=f"Items.Name='{escaped_name}'",
+            where=where_clause,
         )
 
         return _parse_item_data(items[0]) if items else None
