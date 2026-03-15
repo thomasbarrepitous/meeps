@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
 from typing import List
 
-import leaguepedia_parser_thomasbarrepitous as lp
-from leaguepedia_parser_thomasbarrepitous.parsers.roster_changes_parser import RosterChange, RosterAction
+import meeps as lp
+from meeps.parsers.roster_changes_parser import RosterChange, RosterAction
 
 from .conftest import TestConstants, assert_valid_dataclass_instance, assert_mock_called_with_table
 
@@ -245,7 +245,7 @@ class TestRosterChangesAPI:
         assert_mock_called_with_table(mock_leaguepedia_query, "RosterChanges")
     
     @pytest.mark.integration
-    @patch('leaguepedia_parser_thomasbarrepitous.parsers.roster_changes_parser.datetime')
+    @patch('meeps.parsers.roster_changes_parser.datetime')
     def test_get_recent_roster_changes(self, mock_datetime, mock_leaguepedia_query, roster_changes_mock_data):
         """Test get_recent_roster_changes with mocked datetime."""
         # Mock current time
@@ -408,7 +408,7 @@ class TestRosterChangesEdgeCases:
         assert roster_change.already_joined == "Yes"
     
     @pytest.mark.integration
-    @patch('leaguepedia_parser_thomasbarrepitous.parsers.roster_changes_parser.datetime')
+    @patch('meeps.parsers.roster_changes_parser.datetime')
     def test_get_recent_roster_changes_custom_days(self, mock_datetime, mock_leaguepedia_query, roster_changes_mock_data):
         """Test get_recent_roster_changes with custom day count."""
         mock_now = datetime(2023, 12, 15)

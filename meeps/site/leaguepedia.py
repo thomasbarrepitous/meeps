@@ -2,7 +2,7 @@ import time
 from mwrogue.esports_client import EsportsClient
 from mwclient.errors import APIError
 
-from leaguepedia_parser_thomasbarrepitous.logger import leaguepedia_parser_logger as logger
+from meeps.logger import leaguepedia_parser_logger as logger
 
 
 class LeaguepediaSite:

@@ -360,7 +360,7 @@ def test_data_factory():
 @pytest.fixture
 def mock_leaguepedia_query():
     """Mock the leaguepedia query method."""
-    with patch('leaguepedia_parser_thomasbarrepitous.site.leaguepedia.leaguepedia.query') as mock:
+    with patch('meeps.site.leaguepedia.leaguepedia.query') as mock:
         yield mock
 
 

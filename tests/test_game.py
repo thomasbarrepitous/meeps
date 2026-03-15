@@ -1,5 +1,5 @@
 import pytest
-import leaguepedia_parser_thomasbarrepitous as leaguepedia_parser
+import meeps as leaguepedia_parser
 
 regions_names = ["China", "Europe", "Korea"]
 

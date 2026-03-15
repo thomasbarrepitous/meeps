@@ -10,7 +10,7 @@ from lol_dto.classes.game import (
 )
 from lol_dto.classes.sources.riot_lol_api import RiotGameSource
 
-from leaguepedia_parser_thomasbarrepitous.transmuters.game_players import (
+from meeps.transmuters.game_players import (
     LeaguepediaPlayerIdentifier,
 )
 

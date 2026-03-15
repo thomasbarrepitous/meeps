@@ -1,7 +1,7 @@
 from typing import List, Dict, Optional
 
-from leaguepedia_parser_thomasbarrepitous.site.leaguepedia import leaguepedia
-from leaguepedia_parser_thomasbarrepitous.transmuters.field_names import (
+from meeps.site.leaguepedia import leaguepedia
+from meeps.transmuters.field_names import (
     tournament_rosters_fields,
 )
 

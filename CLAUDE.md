@@ -11,16 +11,16 @@ poetry install
 poetry run python -m pytest tests/ -v
 
 # Test specific modules
-poetry run python -c "import leaguepedia_parser_thomasbarrepitous; print('Import successful')"
+poetry run python -c "import meeps; print('Import successful')"
 ```
 
 ### Code Quality
 ```bash
 # Format code with black
-poetry run black leaguepedia_parser_thomasbarrepitous/
+poetry run black meeps/
 
 # Check code style
-poetry run black --check leaguepedia_parser_thomasbarrepitous/
+poetry run black --check meeps/
 ```
 
 ### Package Management
@@ -41,7 +41,7 @@ poetry show --tree
 ## Project Structure
 
 ```
-leaguepedia_parser_thomasbarrepitous/
+meeps/
 ├── __init__.py                    # Main package exports
 ├── logger.py                      # Logging configuration
 ├── site/
@@ -84,7 +84,7 @@ poetry run python your_script.py
 ### Test Import Errors
 Common test import issues and solutions:
 
-1. **Package Name Mismatch**: Tests expect the package to be importable as `leaguepedia_parser`, but the actual package name is `leaguepedia_parser_thomasbarrepitous`. Update test imports accordingly.
+1. **Package Name Mismatch**: Tests expect the package to be importable as `leaguepedia_parser`, but the actual package name is `meeps`. Update test imports accordingly.
 
 2. **Relative Import Errors**: When restructuring test files, use relative imports for conftest.py:
    ```python
@@ -114,7 +114,7 @@ When working with test mocks and fixtures:
 
 1. **DateTime Mocking**: Use proper patching for datetime-dependent functions:
    ```python
-   @patch('leaguepedia_parser_thomasbarrepitous.parsers.roster_changes_parser.datetime')
+   @patch('meeps.parsers.roster_changes_parser.datetime')
    def test_function(self, mock_datetime):
        mock_datetime.now.return_value = datetime(2023, 12, 15)
        mock_datetime.timedelta = timedelta  # Use real timedelta
@@ -168,7 +168,7 @@ When working with test mocks and fixtures:
 
 ### Basic Usage
 ```python
-import leaguepedia_parser_thomasbarrepitous as lp
+import meeps as lp
 
 # Get regions
 regions = lp.get_regions()
@@ -378,5 +378,5 @@ poetry run python -m pytest tests/ -m integration -v
 poetry run python -m pytest tests/test_standings.py -v
 
 # Run with coverage
-poetry run python -m pytest tests/ --cov=leaguepedia_parser_thomasbarrepitous
+poetry run python -m pytest tests/ --cov=meeps
 ```

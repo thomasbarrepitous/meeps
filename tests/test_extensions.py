@@ -4,11 +4,11 @@ import pytest
 from unittest.mock import Mock, patch
 
 # Import the new parsers
-import leaguepedia_parser_thomasbarrepitous as lp
-from leaguepedia_parser_thomasbarrepitous.parsers.standings_parser import Standing
-from leaguepedia_parser_thomasbarrepitous.parsers.champions_parser import Champion
-from leaguepedia_parser_thomasbarrepitous.parsers.items_parser import Item
-from leaguepedia_parser_thomasbarrepitous.parsers.roster_changes_parser import RosterChange
+import meeps as lp
+from meeps.parsers.standings_parser import Standing
+from meeps.parsers.champions_parser import Champion
+from meeps.parsers.items_parser import Item
+from meeps.parsers.roster_changes_parser import RosterChange
 
 
 class TestStandings:
@@ -121,7 +121,7 @@ class TestRosterChanges:
 class TestIntegration:
     """Integration tests for the extended functionality."""
     
-    @patch('leaguepedia_parser_thomasbarrepitous.site.leaguepedia.leaguepedia.query')
+    @patch('meeps.site.leaguepedia.leaguepedia.query')
     def test_champions_query_mock(self, mock_query):
         """Test champions query with mocked data."""
         mock_query.return_value = [
@@ -142,7 +142,7 @@ class TestIntegration:
         assert champions[0].is_ranged is True
         mock_query.assert_called_once()
     
-    @patch('leaguepedia_parser_thomasbarrepitous.site.leaguepedia.leaguepedia.query')
+    @patch('meeps.site.leaguepedia.leaguepedia.query')
     def test_standings_query_mock(self, mock_query):
         """Test standings query with mocked data."""
         mock_query.return_value = [

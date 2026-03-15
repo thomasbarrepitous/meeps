@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import Mock, patch
 from datetime import datetime, timedelta
 
-from leaguepedia_parser_thomasbarrepitous.parsers.contracts_parser import (
+from meeps.parsers.contracts_parser import (
     Contract,
     get_contracts,
     get_player_contracts,

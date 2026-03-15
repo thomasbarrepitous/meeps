@@ -3,11 +3,11 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 import enum
 
-from leaguepedia_parser_thomasbarrepitous.site.leaguepedia import leaguepedia
-from leaguepedia_parser_thomasbarrepitous.transmuters.field_names import (
+from meeps.site.leaguepedia import leaguepedia
+from meeps.transmuters.field_names import (
     roster_changes_fields,
 )
-from leaguepedia_parser_thomasbarrepitous.parsers.query_builder import QueryBuilder
+from meeps.parsers.query_builder import QueryBuilder
 
 
 class RosterAction(enum.Enum):

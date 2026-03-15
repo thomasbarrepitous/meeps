@@ -5,8 +5,8 @@ from datetime import datetime
 from unittest.mock import Mock
 from typing import List
 
-import leaguepedia_parser_thomasbarrepitous as lp
-from leaguepedia_parser_thomasbarrepitous.parsers.champions_parser import Champion
+import meeps as lp
+from meeps.parsers.champions_parser import Champion
 
 from .conftest import TestConstants, assert_valid_dataclass_instance, assert_mock_called_with_table
 

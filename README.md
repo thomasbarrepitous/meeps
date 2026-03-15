@@ -1,4 +1,4 @@
-# leaguepedia_parser - Enhanced Edition
+# meeps - Enhanced Leaguepedia Parser
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
@@ -31,13 +31,13 @@ A **comprehensive** Leaguepedia parser providing easy access to League of Legend
 
 ```bash
 # With pip
-pip install leaguepedia_parser_thomasbarrepitous
+pip install meeps
 
 # With Poetry
-poetry add leaguepedia_parser_thomasbarrepitous
+poetry add meeps
 
 # Quick verification
-python -c "import leaguepedia_parser_thomasbarrepitous as lp; print('✅ Import successful')"
+python -c "import meeps as lp; print('✅ Import successful')"
 ```
 
 ## Demo
@@ -47,7 +47,7 @@ python -c "import leaguepedia_parser_thomasbarrepitous as lp; print('✅ Import 
 ## Usage
 
 ```python
-import leaguepedia_parser_thomasbarrepitous as lp
+import meeps as lp
 
 # Games & Tournaments
 regions = lp.get_regions()

@@ -4,11 +4,11 @@ import pytest
 from unittest.mock import Mock, patch
 from typing import List, Any, Dict
 
-import leaguepedia_parser_thomasbarrepitous as lp
-from leaguepedia_parser_thomasbarrepitous.parsers.standings_parser import Standing
-from leaguepedia_parser_thomasbarrepitous.parsers.champions_parser import Champion
-from leaguepedia_parser_thomasbarrepitous.parsers.items_parser import Item
-from leaguepedia_parser_thomasbarrepitous.parsers.roster_changes_parser import RosterChange
+import meeps as lp
+from meeps.parsers.standings_parser import Standing
+from meeps.parsers.champions_parser import Champion
+from meeps.parsers.items_parser import Item
+from meeps.parsers.roster_changes_parser import RosterChange
 
 from .conftest import TestConstants, TestDataFactory
 

@@ -1,27 +1,27 @@
-from leaguepedia_parser_thomasbarrepitous.parsers.game_parser import (
+from meeps.parsers.game_parser import (
     get_regions,
     get_tournaments,
     get_games,
     get_game_details,
 )
-from leaguepedia_parser_thomasbarrepitous.parsers.team_parser import (
+from meeps.parsers.team_parser import (
     get_active_players,
     get_team_logo,
     get_long_team_name_from_trigram,
     get_team_thumbnail,
     get_all_team_assets,
 )
-from leaguepedia_parser_thomasbarrepitous.parsers.player_parser import (
+from meeps.parsers.player_parser import (
     get_player_by_name,
 )
 
 # Tournament roster information
-from leaguepedia_parser_thomasbarrepitous.parsers.tournament_roster_parser import (
+from meeps.parsers.tournament_roster_parser import (
     get_tournament_rosters,
 )
 
 # Standings
-from leaguepedia_parser_thomasbarrepitous.parsers.standings_parser import (
+from meeps.parsers.standings_parser import (
     get_standings,
     get_tournament_standings,
     get_team_standings,
@@ -29,7 +29,7 @@ from leaguepedia_parser_thomasbarrepitous.parsers.standings_parser import (
 )
 
 # Champions and items data
-from leaguepedia_parser_thomasbarrepitous.parsers.champions_parser import (
+from meeps.parsers.champions_parser import (
     get_champions,
     get_champion_by_name,
     get_champions_by_attributes,
@@ -37,7 +37,7 @@ from leaguepedia_parser_thomasbarrepitous.parsers.champions_parser import (
     get_melee_champions,
     get_ranged_champions,
 )
-from leaguepedia_parser_thomasbarrepitous.parsers.items_parser import (
+from meeps.parsers.items_parser import (
     get_items,
     get_item_by_name,
     get_items_by_tier,
@@ -50,7 +50,7 @@ from leaguepedia_parser_thomasbarrepitous.parsers.items_parser import (
 )
 
 # Enhanced roster tracking
-from leaguepedia_parser_thomasbarrepitous.parsers.roster_changes_parser import (
+from meeps.parsers.roster_changes_parser import (
     get_roster_changes,
     get_team_roster_changes,
     get_player_roster_changes,
@@ -61,7 +61,7 @@ from leaguepedia_parser_thomasbarrepitous.parsers.roster_changes_parser import (
 )
 
 # Contracts
-from leaguepedia_parser_thomasbarrepitous.parsers.contracts_parser import (
+from meeps.parsers.contracts_parser import (
     get_contracts,
     get_player_contracts,
     get_team_contracts,
@@ -71,7 +71,7 @@ from leaguepedia_parser_thomasbarrepitous.parsers.contracts_parser import (
 )
 
 # ScoreboardPlayers - Match Performance Statistics
-from leaguepedia_parser_thomasbarrepitous.parsers.scoreboard_players_parser import (
+from meeps.parsers.scoreboard_players_parser import (
     get_scoreboard_players,
     get_player_match_history,
     get_team_match_performance,

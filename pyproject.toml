@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "leaguepedia_parser_thomasbarrepitous"
+name = "meeps"
 version = "0.1.1"
 description = "Advanced League of Legends esports analytics library with player performance statistics, contract tracking, and comprehensive tournament data"
 authors = ["ThomasBP <barrepitousthomas@gmail.com>", "Tolki <gary.mialaret@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/thomasbarrepitous/leaguepedia_parser"
-repository = "https://github.com/thomasbarrepitous/leaguepedia_parser"
-documentation = "https://github.com/thomasbarrepitous/leaguepedia_parser#readme"
+homepage = "https://github.com/thomasbarrepitous/meeps"
+repository = "https://github.com/thomasbarrepitous/meeps"
+documentation = "https://github.com/thomasbarrepitous/meeps#readme"
 keywords = ["leaguepedia", "league-of-legends", "esports", "analytics", "performance-statistics", "player-data", "gaming", "riot-games", "tournaments", "contracts", "kda", "fantasy-sports"]
 classifiers = [
     "Development Status :: 4 - Beta",

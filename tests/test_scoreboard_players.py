@@ -3,7 +3,7 @@
 import pytest
 from unittest.mock import Mock, patch
 
-from leaguepedia_parser_thomasbarrepitous.parsers.scoreboard_players_parser import (
+from meeps.parsers.scoreboard_players_parser import (
     ScoreboardPlayer,
     get_scoreboard_players,
     get_player_match_history,

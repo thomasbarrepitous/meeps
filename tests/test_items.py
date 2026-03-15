@@ -4,8 +4,8 @@ import pytest
 from unittest.mock import Mock
 from typing import List
 
-import leaguepedia_parser_thomasbarrepitous as lp
-from leaguepedia_parser_thomasbarrepitous.parsers.items_parser import Item
+import meeps as lp
+from meeps.parsers.items_parser import Item
 
 from .conftest import TestConstants, assert_valid_dataclass_instance, assert_mock_called_with_table
 

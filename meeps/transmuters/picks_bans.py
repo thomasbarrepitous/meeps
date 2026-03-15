@@ -2,7 +2,7 @@ from typing import List
 from lol_dto.classes.game.lol_game import LolPickBan
 import lol_id_tools as lit
 
-from leaguepedia_parser_thomasbarrepitous.transmuters.field_names import (
+from meeps.transmuters.field_names import (
     picks_bans_fields,
 )
 

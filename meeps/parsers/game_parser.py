@@ -4,23 +4,23 @@ from typing import List, Optional
 from lol_dto.classes.game import LolGame
 from lol_dto.classes.game.lol_game import LolPickBan
 
-from leaguepedia_parser_thomasbarrepitous.site.leaguepedia import leaguepedia
-from leaguepedia_parser_thomasbarrepitous.transmuters.field_names import (
+from meeps.site.leaguepedia import leaguepedia
+from meeps.transmuters.field_names import (
     game_fields,
     tournaments_fields,
     game_players_fields,
 )
-from leaguepedia_parser_thomasbarrepitous.transmuters.game import transmute_game
-from leaguepedia_parser_thomasbarrepitous.transmuters.game_players import add_players
-from leaguepedia_parser_thomasbarrepitous.transmuters.picks_bans import (
+from meeps.transmuters.game import transmute_game
+from meeps.transmuters.game_players import add_players
+from meeps.transmuters.picks_bans import (
     picks_bans_fields,
     transmute_picks_bans,
 )
-from leaguepedia_parser_thomasbarrepitous.transmuters.tournament import (
+from meeps.transmuters.tournament import (
     transmute_tournament,
     LeaguepediaTournament,
 )
-from leaguepedia_parser_thomasbarrepitous.parsers.query_builder import QueryBuilder
+from meeps.parsers.query_builder import QueryBuilder
 
 
 def get_regions() -> List[str]:

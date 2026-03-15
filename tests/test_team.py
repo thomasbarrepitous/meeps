@@ -1,6 +1,6 @@
 import pytest
-import leaguepedia_parser_thomasbarrepitous as leaguepedia_parser
-from leaguepedia_parser_thomasbarrepitous.parsers.team_parser import TeamPlayer
+import meeps as leaguepedia_parser
+from meeps.parsers.team_parser import TeamPlayer
 
 @pytest.mark.parametrize("team_name", ["T1"])
 def test_get_active_players_current_date(team_name):

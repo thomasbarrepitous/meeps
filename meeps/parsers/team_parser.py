@@ -1,6 +1,6 @@
 import dataclasses
 from typing import Optional, List, Set
-from leaguepedia_parser_thomasbarrepitous.site.leaguepedia import leaguepedia
+from meeps.site.leaguepedia import leaguepedia
 
 VALID_ROLES: Set[str] = {"Top", "Jungle", "Mid", "Bot", "Support"}
 
