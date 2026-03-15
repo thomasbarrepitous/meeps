@@ -14,12 +14,14 @@ tournaments_names = [
 ]
 
 
+@pytest.mark.api
 def test_regions():
     regions = leaguepedia_parser.get_regions()
 
     assert all(region in regions for region in regions_names)
 
 
+@pytest.mark.api
 @pytest.mark.parametrize("region", regions_names)
 def test_tournaments(region):
     tournaments = leaguepedia_parser.get_tournaments(region, year=2020)
@@ -32,6 +34,7 @@ def test_tournaments(region):
         assert tournament.tournamentLevel == "Primary"
 
 
+@pytest.mark.api
 @pytest.mark.parametrize("tournament_name", tournaments_names)
 def test_games(tournament_name):
     games = leaguepedia_parser.get_games(tournament_name)
@@ -45,6 +48,7 @@ def test_games(tournament_name):
                 assert not player.role
 
 
+@pytest.mark.api
 @pytest.mark.parametrize("tournament_name", tournaments_names)
 def test_get_details(tournament_name):
     games = leaguepedia_parser.get_games(tournament_name)

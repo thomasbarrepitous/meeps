@@ -366,17 +366,34 @@ def test_function(self, mock_leaguepedia_query, standings_mock_data):
 ```
 
 ### Running Tests
+
+The test suite is organized into **fast tests** (mocked, no network) and **slow tests** (real API calls).
+
 ```bash
-# Run all tests
+# Run fast tests only (default, recommended for development)
+# Excludes tests marked with @pytest.mark.api
 poetry run python -m pytest tests/ -v
+# or explicitly:
+poetry run python -m pytest tests/ -m "not api" -v
+
+# Run only API integration tests (slow, requires network)
+# These make real calls to Leaguepedia API
+poetry run python -m pytest tests/ -m api -v
+
+# Run ALL tests (fast + slow)
+poetry run python -m pytest tests/ -m "api or not api" -v
 
 # Run specific test categories
-poetry run python -m pytest tests/ -m unit -v
-poetry run python -m pytest tests/ -m integration -v
+poetry run python -m pytest tests/ -m unit -v         # Fast unit tests
+poetry run python -m pytest tests/ -m integration -v  # Fast integration tests (mocked)
 
 # Run specific test file
 poetry run python -m pytest tests/test_standings.py -v
 
-# Run with coverage
-poetry run python -m pytest tests/ --cov=meeps
+# Run with coverage (fast tests only)
+poetry run python -m pytest tests/ --cov=meeps -m "not api"
 ```
+
+**Performance expectations:**
+- Fast tests: ~210 tests, <10 seconds (uses mocks, no network calls)
+- API tests: ~11 tests, 2-5 minutes (real Leaguepedia API calls)

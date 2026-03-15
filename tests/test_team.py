@@ -2,11 +2,12 @@ import pytest
 import meeps as leaguepedia_parser
 from meeps.parsers.team_parser import TeamPlayer
 
+@pytest.mark.api
 @pytest.mark.parametrize("team_name", ["T1"])
 def test_get_active_players_current_date(team_name):
     # Change this test every new season :')
     assert (
-            leaguepedia_parser.get_active_players(team_name) == 
+            leaguepedia_parser.get_active_players(team_name) ==
             [
                 TeamPlayer(name="Doran", role="Top"),
                 TeamPlayer(name="Faker", role="Mid"),
@@ -16,10 +17,11 @@ def test_get_active_players_current_date(team_name):
             ]
     )
 
+@pytest.mark.api
 @pytest.mark.parametrize("team_name", ["G2 Esports"])
 def test_get_active_players_from_date(team_name):
     assert (
-            leaguepedia_parser.get_active_players(team_name, date="2019-01-01") == 
+            leaguepedia_parser.get_active_players(team_name, date="2019-01-01") ==
             [
                 TeamPlayer(name="Caps", role="Mid"),
                 TeamPlayer(name="Jankos", role="Jungle"),
@@ -30,10 +32,11 @@ def test_get_active_players_from_date(team_name):
     )
 
 
+@pytest.mark.api
 @pytest.mark.parametrize("team_name", ["TSM"])
 def test_get_active_players_from_team_name_disbanded(team_name):
     assert (
-            leaguepedia_parser.get_active_players(team_name) == 
+            leaguepedia_parser.get_active_players(team_name) ==
             []
     )
 
