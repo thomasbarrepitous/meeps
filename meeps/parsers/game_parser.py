@@ -107,8 +107,11 @@ def get_games(tournament_overview_page=None, **kwargs) -> List[LolGame]:
 
 
 def get_game_details(game: LolGame, add_page_id=False) -> LolGame:
-    # TODO Add more scoreboard information in this step
     """Gets most game information available on Leaguepedia.
+
+    Note: For detailed scoreboard statistics (KDA, damage, CS, etc.), use
+    get_game_scoreboard(game_id) from scoreboard_players_parser instead.
+    This separation allows for efficient queries when only basic game info is needed.
 
     Args:
         game: A LolGame with Leaguepedia IDs in its 'sources' dict.

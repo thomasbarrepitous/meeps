@@ -42,7 +42,7 @@ python -c "import meeps as lp; print('✅ Import successful')"
 
 ## Demo
 
-![Demo](https://raw.githubusercontent.com/mrtolkien/leaguepedia_parser/master/leaguepedia_parser_demo.gif)
+![Demo](https://raw.githubusercontent.com/thomasbarrepitous/meeps/master/leaguepedia_parser_demo.gif)
 
 ## Usage
 
