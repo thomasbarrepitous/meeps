@@ -1,6 +1,7 @@
 from typing import List, Dict, Optional
 
 from meeps.site.leaguepedia import leaguepedia
+from meeps.parsers.query_builder import QueryBuilder
 from meeps.transmuters.field_names import (
     tournament_rosters_fields,
 )
@@ -21,19 +22,11 @@ def get_tournament_rosters(team: str, tournament: str = None, **kwargs) -> List[
     Returns:
         A list of dictionaries containing tournament roster information for the specified team
     """
-    where_conditions = [f"TournamentRosters.Team='{team}'"]
-
+    conditions = {"Team": team}
     if tournament:
-        where_conditions.append(f"TournamentRosters.Tournament='{tournament}'")
-
-    # Add any additional filters from kwargs
-    for key, value in kwargs.items():
-        if isinstance(value, str):
-            where_conditions.append(f"TournamentRosters.{key}='{value}'")
-        else:
-            where_conditions.append(f"TournamentRosters.{key}={value}")
-
-    where_clause = " AND ".join(where_conditions)
+        conditions["Tournament"] = tournament
+    conditions.update(kwargs)
+    where_clause = QueryBuilder.build_where("TournamentRosters", conditions)
 
     rosters = leaguepedia.query(
         tables="TournamentRosters",

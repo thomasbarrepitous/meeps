@@ -1,6 +1,7 @@
 import dataclasses
 from typing import Optional, List
 from meeps.site.leaguepedia import leaguepedia
+from meeps.parsers.query_builder import QueryBuilder
 import datetime
 import enum
 
@@ -276,7 +277,7 @@ def get_player_by_name(player_name: str) -> PlayerInfo:
         query = leaguepedia.query(
             tables="Players=P",
             fields=query_fields,
-            where=f"P.Player = '{player_name}'",
+            where=QueryBuilder.build_where("P", {"Player": player_name}),
         )
 
         if not query:

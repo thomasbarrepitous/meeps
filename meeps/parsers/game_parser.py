@@ -98,7 +98,7 @@ def get_games(tournament_overview_page=None, **kwargs) -> List[LolGame]:
     games = leaguepedia.query(
         tables="ScoreboardGames",
         fields=", ".join(game_fields),
-        where=f"ScoreboardGames.OverviewPage ='{tournament_overview_page}'",
+        where=QueryBuilder.build_where("ScoreboardGames", {"OverviewPage": tournament_overview_page}),
         order_by="ScoreboardGames.DateTime_UTC",
         **kwargs,
     )
@@ -144,7 +144,7 @@ def _get_picks_bans(game: LolGame) -> Optional[List[LolPickBan]]:
         tables="PicksAndBansS7, ScoreboardGames",
         join_on="PicksAndBansS7.GameId = ScoreboardGames.GameId",
         fields=", ".join(picks_bans_fields),
-        where=f"ScoreboardGames.GameId = '{game.sources.leaguepedia.gameId}'",
+        where=QueryBuilder.build_where("ScoreboardGames", {"GameId": game.sources.leaguepedia.gameId}),
     )
 
     if not picks_bans:
@@ -162,7 +162,7 @@ def _add_game_players(game: LolGame, add_page_id: bool) -> LolGame:
         "ScoreboardPlayers.Link = PlayerRedirects.AllName, "
         "PlayerRedirects.OverviewPage = Players.OverviewPage",
         fields=", ".join(game_players_fields) + ", Players._pageID=pageId",
-        where=f"ScoreboardGames.GameId = '{game.sources.leaguepedia.gameId}'",
+        where=QueryBuilder.build_where("ScoreboardGames", {"GameId": game.sources.leaguepedia.gameId}),
     )
 
     return add_players(game, players, add_page_id=add_page_id)
