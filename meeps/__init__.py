@@ -60,6 +60,14 @@ from meeps.parsers.roster_changes_parser import (
     get_retirements,
 )
 
+# Enums for valid values
+from meeps.enums import (
+    ItemTier,
+    ChampionResource,
+    ChampionAttribute,
+    Role,
+)
+
 # Contracts
 from meeps.parsers.contracts_parser import (
     get_contracts,

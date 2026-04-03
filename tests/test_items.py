@@ -51,12 +51,11 @@ class TestItemDataclass:
             hp_regen=0,
             armor=0,
             mr=0,
-            attack_damage=0,
             crit=20,
             ap=0,
             mana=0
         )
-        
+
         assert_valid_dataclass_instance(item, Item, ['name'])
         assert item.name == TestConstants.ITEM_INFINITY_EDGE
         assert item.tier == "Legendary"
@@ -67,25 +66,17 @@ class TestItemDataclass:
     
     @pytest.mark.unit
     def test_item_provides_ad_property(self):
-        """Test Item provides_ad property with AD sources."""
+        """Test Item provides_ad property."""
         # Test with ad field
         item_ad = Item(name="TestItem", ad=70)
         assert item_ad.provides_ad is True
-        
-        # Test with attack_damage field
-        item_attack_damage = Item(name="TestItem", attack_damage=70)
-        assert item_attack_damage.provides_ad is True
-        
-        # Test with both fields
-        item_both = Item(name="TestItem", ad=30, attack_damage=40)
-        assert item_both.provides_ad is True
-        
+
         # Test with no AD
-        item_no_ad = Item(name="TestItem", ad=0, attack_damage=0)
+        item_no_ad = Item(name="TestItem", ad=0)
         assert item_no_ad.provides_ad is False
-        
-        # Test with None values
-        item_none = Item(name="TestItem", ad=None, attack_damage=None)
+
+        # Test with None value
+        item_none = Item(name="TestItem", ad=None)
         assert item_none.provides_ad is False
     
     @pytest.mark.unit

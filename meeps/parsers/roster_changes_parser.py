@@ -173,7 +173,7 @@ def get_roster_changes(
     tournament: str = None,
     start_date: str = None,
     end_date: str = None,
-    **kwargs,
+    order_by: str = None,
 ) -> List[RosterChange]:
     """Returns roster change information from Leaguepedia.
 
@@ -184,7 +184,7 @@ def get_roster_changes(
         tournament: Tournament to filter by
         start_date: Start date for filtering (YYYY-MM-DD format)
         end_date: End date for filtering (YYYY-MM-DD format)
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "RosterChanges.Date_Sort ASC")
 
     Returns:
         A list of RosterChange objects
@@ -226,8 +226,7 @@ def get_roster_changes(
             tables="RosterChanges",
             fields=",".join(roster_changes_fields),
             where=where_clause,
-            order_by="RosterChanges.Date_Sort DESC",
-            **kwargs,
+            order_by=order_by or "RosterChanges.Date_Sort DESC",
         )
 
         return [_parse_roster_change_data(change) for change in changes]
@@ -237,43 +236,43 @@ def get_roster_changes(
 
 
 def get_team_roster_changes(
-    team: str, tournament: str = None, **kwargs
+    team: str, tournament: str = None, order_by: str = None
 ) -> List[RosterChange]:
     """Returns all roster changes for a specific team.
 
     Args:
         team: Team name
         tournament: Tournament to filter by (optional)
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "RosterChanges.Date_Sort ASC")
 
     Returns:
         A list of RosterChange objects for the specified team
     """
-    return get_roster_changes(team=team, tournament=tournament, **kwargs)
+    return get_roster_changes(team=team, tournament=tournament, order_by=order_by)
 
 
-def get_player_roster_changes(player: str, **kwargs) -> List[RosterChange]:
+def get_player_roster_changes(player: str, order_by: str = None) -> List[RosterChange]:
     """Returns all roster changes for a specific player.
 
     Args:
         player: Player name
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "RosterChanges.Date_Sort ASC")
 
     Returns:
         A list of RosterChange objects for the specified player
     """
-    return get_roster_changes(player=player, **kwargs)
+    return get_roster_changes(player=player, order_by=order_by)
 
 
 def get_recent_roster_changes(
-    days: int = 30, team: str = None, **kwargs
+    days: int = 30, team: str = None, order_by: str = None
 ) -> List[RosterChange]:
     """Returns recent roster changes within the specified number of days.
 
     Args:
         days: Number of days to look back (default: 30)
         team: Team to filter by (optional)
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "RosterChanges.Date_Sort ASC")
 
     Returns:
         A list of recent RosterChange objects
@@ -282,49 +281,49 @@ def get_recent_roster_changes(
     start_date = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
 
     return get_roster_changes(
-        team=team, start_date=start_date, end_date=end_date, **kwargs
+        team=team, start_date=start_date, end_date=end_date, order_by=order_by
     )
 
 
 def get_roster_additions(
-    team: str = None, tournament: str = None, **kwargs
+    team: str = None, tournament: str = None, order_by: str = None
 ) -> List[RosterChange]:
     """Returns roster additions (players joining teams).
 
     Args:
         team: Team to filter by (optional)
         tournament: Tournament to filter by (optional)
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "RosterChanges.Date_Sort ASC")
 
     Returns:
         A list of RosterChange objects representing additions
     """
-    return get_roster_changes(team=team, tournament=tournament, action="Join", **kwargs)
+    return get_roster_changes(team=team, tournament=tournament, action="Join", order_by=order_by)
 
 
 def get_roster_removals(
-    team: str = None, tournament: str = None, **kwargs
+    team: str = None, tournament: str = None, order_by: str = None
 ) -> List[RosterChange]:
     """Returns roster removals (players leaving teams).
 
     Args:
         team: Team to filter by (optional)
         tournament: Tournament to filter by (optional)
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "RosterChanges.Date_Sort ASC")
 
     Returns:
         A list of RosterChange objects representing removals
     """
     return get_roster_changes(
-        team=team, tournament=tournament, action="Leave", **kwargs
+        team=team, tournament=tournament, action="Leave", order_by=order_by
     )
 
 
-def get_retirements(**kwargs) -> List[RosterChange]:
+def get_retirements(order_by: str = None) -> List[RosterChange]:
     """Returns player retirements.
 
     Args:
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "RosterChanges.Date_Sort ASC")
 
     Returns:
         A list of RosterChange objects representing retirements
@@ -337,8 +336,7 @@ def get_retirements(**kwargs) -> List[RosterChange]:
             tables="RosterChanges",
             fields=",".join(roster_changes_fields),
             where=where_clause,
-            order_by="RosterChanges.Date_Sort DESC",
-            **kwargs,
+            order_by=order_by or "RosterChanges.Date_Sort DESC",
         )
 
         return [_parse_roster_change_data(change) for change in changes]

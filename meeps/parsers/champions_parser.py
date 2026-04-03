@@ -152,14 +152,14 @@ def _parse_champion_data(data: dict) -> Champion:
 
 
 def get_champions(
-    resource: str = None, attributes: str = None, **kwargs
+    resource: str = None, attributes: str = None, order_by: str = None
 ) -> List[Champion]:
     """Returns champion information from Leaguepedia.
 
     Args:
         resource: Resource type to filter by (e.g., "Mana", "Energy")
         attributes: Attribute to filter by (e.g., "Fighter", "Tank", "Assassin")
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "Champions.ReleaseDate DESC")
 
     Returns:
         A list of Champion objects
@@ -187,8 +187,7 @@ def get_champions(
             tables="Champions",
             fields=",".join(champions_fields),
             where=where_clause,
-            order_by="Champions.Name",
-            **kwargs,
+            order_by=order_by or "Champions.Name",
         )
 
         return [_parse_champion_data(champion) for champion in champions]

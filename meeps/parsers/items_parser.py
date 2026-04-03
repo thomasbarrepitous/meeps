@@ -23,7 +23,6 @@ class Item:
         hp_regen: Health regeneration
         armor: Armor points
         mr: Magic resistance points
-        attack_damage: Attack damage (duplicate field)
         crit: Critical strike chance
         attack_speed: Attack speed percentage
         armor_pen: Armor penetration
@@ -63,7 +62,6 @@ class Item:
     hp_regen: Optional[int] = None
     armor: Optional[int] = None
     mr: Optional[int] = None
-    attack_damage: Optional[int] = None
     crit: Optional[int] = None
     attack_speed: Optional[int] = None
     armor_pen: Optional[int] = None
@@ -93,9 +91,7 @@ class Item:
     @property
     def provides_ad(self) -> bool:
         """Returns True if item provides attack damage."""
-        return bool(
-            (self.ad and self.ad > 0) or (self.attack_damage and self.attack_damage > 0)
-        )
+        return bool(self.ad and self.ad > 0)
 
     @property
     def provides_ap(self) -> bool:
@@ -156,7 +152,6 @@ def _parse_item_data(data: dict) -> Item:
         hp_regen=parse_int(data.get("HPRegen")),
         armor=parse_int(data.get("Armor")),
         mr=parse_int(data.get("MR")),
-        attack_damage=parse_int(data.get("AttackDamage")),
         crit=parse_int(data.get("Crit")),
         attack_speed=parse_int(data.get("AttackSpeed")),
         armor_pen=parse_int(data.get("ArmorPen")),
@@ -187,13 +182,13 @@ def _parse_item_data(data: dict) -> Item:
 
 def get_items(
     tier: str = None,
-    **kwargs,
+    order_by: str = None,
 ) -> List[Item]:
     """Returns item information from Leaguepedia.
 
     Args:
         tier: Filter by tier (e.g., "Basic", "Epic", "Legendary")
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "Items.TotalCost DESC")
 
     Returns:
         A list of Item objects
@@ -208,8 +203,7 @@ def get_items(
             tables="Items",
             fields=",".join(items_fields),
             where=where_clause,
-            order_by="Items.Name",
-            **kwargs,
+            order_by=order_by or "Items.Name",
         )
 
         return [_parse_item_data(item) for item in items]
@@ -294,7 +288,7 @@ def search_items_by_stat(
     provides_mr: bool = None,
     provides_health: bool = None,
     provides_mana: bool = None,
-    **kwargs,
+    order_by: str = None,
 ) -> List[Item]:
     """Search items by the stats they provide.
 
@@ -305,12 +299,12 @@ def search_items_by_stat(
         provides_mr: Filter items that provide magic resistance
         provides_health: Filter items that provide health
         provides_mana: Filter items that provide mana
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "Items.TotalCost DESC")
 
     Returns:
         List of items matching the stat criteria
     """
-    items = get_items(**kwargs)
+    items = get_items(order_by=order_by)
 
     results = []
     for item in items:

@@ -118,14 +118,14 @@ def _parse_standing_data(data: dict) -> Standing:
 def get_standings(
     overview_page: str = None,
     team: str = None,
-    **kwargs,
+    order_by: str = None,
 ) -> List[Standing]:
     """Returns standings information from Leaguepedia.
 
     Args:
         overview_page: Tournament overview page to filter by
         team: Team name to filter by
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "Standings.WinSeries DESC")
 
     Returns:
         A list of Standing objects containing team standings
@@ -146,8 +146,7 @@ def get_standings(
             tables="Standings",
             fields=",".join(standings_fields),
             where=where_clause,
-            order_by="Standings.Place",
-            **kwargs,
+            order_by=order_by or "Standings.Place",
         )
 
         return [_parse_standing_data(standing) for standing in standings]
@@ -156,40 +155,40 @@ def get_standings(
         raise RuntimeError(f"Failed to fetch standings: {str(e)}")
 
 
-def get_tournament_standings(overview_page: str, **kwargs) -> List[Standing]:
+def get_tournament_standings(overview_page: str, order_by: str = None) -> List[Standing]:
     """Returns standings for a specific tournament.
 
     Args:
         overview_page: Tournament overview page
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "Standings.WinSeries DESC")
 
     Returns:
         A list of Standing objects sorted by place
     """
-    return get_standings(overview_page=overview_page, **kwargs)
+    return get_standings(overview_page=overview_page, order_by=order_by)
 
 
-def get_team_standings(team: str, **kwargs) -> List[Standing]:
+def get_team_standings(team: str, order_by: str = None) -> List[Standing]:
     """Returns standings history for a specific team.
 
     Args:
         team: Team name
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "Standings.WinSeries DESC")
 
     Returns:
         A list of Standing objects for the specified team
     """
-    return get_standings(team=team, **kwargs)
+    return get_standings(team=team, order_by=order_by)
 
 
-def get_standings_by_overview_page(overview_page: str, **kwargs) -> List[Standing]:
+def get_standings_by_overview_page(overview_page: str, order_by: str = None) -> List[Standing]:
     """Returns standings for a specific tournament overview page.
 
     Args:
         overview_page: Tournament overview page
-        **kwargs: Additional query parameters
+        order_by: Optional ordering (e.g., "Standings.WinSeries DESC")
 
     Returns:
         A list of Standing objects for the specified tournament
     """
-    return get_standings(overview_page=overview_page, **kwargs)
+    return get_standings(overview_page=overview_page, order_by=order_by)
