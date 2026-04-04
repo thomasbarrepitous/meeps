@@ -1,3 +1,5 @@
+__version__ = "0.2.0"
+
 from meeps.parsers.game_parser import (
     get_regions,
     get_tournaments,

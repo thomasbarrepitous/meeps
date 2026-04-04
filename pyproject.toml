@@ -1,14 +1,28 @@
-[tool.poetry]
+[project]
 name = "meeps"
 version = "0.2.0"
 description = "Advanced League of Legends esports analytics library with player performance statistics, contract tracking, and comprehensive tournament data"
-authors = ["ThomasBP <barrepitousthomas@gmail.com>", "Tolki <gary.mialaret@gmail.com>"]
+authors = [
+    {name = "Thomas Barrepitous", email = "barrepitousthomas@gmail.com"},
+    {name = "Tolki", email = "gary.mialaret@gmail.com"},
+]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/thomasbarrepitous/meeps"
-repository = "https://github.com/thomasbarrepitous/meeps"
-documentation = "https://github.com/thomasbarrepitous/meeps#readme"
-keywords = ["leaguepedia", "league-of-legends", "esports", "analytics", "performance-statistics", "player-data", "gaming", "riot-games", "tournaments", "contracts", "kda", "fantasy-sports"]
+requires-python = ">=3.9,<4.0"
+keywords = [
+    "leaguepedia",
+    "league-of-legends",
+    "esports",
+    "analytics",
+    "performance-statistics",
+    "player-data",
+    "gaming",
+    "riot-games",
+    "tournaments",
+    "contracts",
+    "kda",
+    "fantasy-sports",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -17,7 +31,6 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Scientific/Engineering :: Information Analysis",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -25,6 +38,12 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent",
 ]
+dynamic = ["dependencies"]
+
+[project.urls]
+Homepage = "https://github.com/thomasbarrepitous/meeps"
+Repository = "https://github.com/thomasbarrepitous/meeps"
+Documentation = "https://github.com/thomasbarrepitous/meeps#readme"
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
@@ -41,7 +60,6 @@ black = "^23.0.0"
 ruff = "^0.1.0"
 mypy = "^1.0.0"
 pre-commit = "^3.0.0"
-
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
