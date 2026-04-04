@@ -89,7 +89,6 @@ def get_contracts(
     include_removals: bool = False,
     active_only: bool = False,
     limit: int = None,
-    **kwargs,
 ) -> List[Contract]:
     """Returns contract information from Leaguepedia.
 
@@ -98,7 +97,7 @@ def get_contracts(
         team: Team name to filter by
         include_removals: Whether to include contract removal entries
         active_only: Whether to only return currently active contracts
-        **kwargs: Additional query parameters
+        limit: Maximum number of contracts to return
 
     Returns:
         A list of Contract objects
@@ -135,16 +134,11 @@ def get_contracts(
 
         where_clause = " AND ".join(where_conditions) if where_conditions else None
 
-        # Remove limit from kwargs to avoid conflicts with leaguepedia.query internal limit
-        clean_kwargs = kwargs.copy()
-        clean_kwargs.pop('limit', None)
-
         contracts = leaguepedia.query(
             tables="Contracts",
             fields=",".join(contracts_fields),
             where=where_clause,
             order_by="Contracts.ContractEnd DESC",
-            **clean_kwargs,
         )
 
         parsed_contracts = [_parse_contract_data(contract) for contract in contracts]
@@ -156,17 +150,29 @@ def get_contracts(
         raise RuntimeError(f"Failed to fetch contracts: {str(e)}")
 
 
-def get_player_contracts(player: str, **kwargs) -> List[Contract]:
+def get_player_contracts(
+    player: str,
+    include_removals: bool = False,
+    active_only: bool = False,
+    limit: int = None,
+) -> List[Contract]:
     """Returns all contracts for a specific player.
 
     Args:
         player: Player name
-        **kwargs: Additional query parameters
+        include_removals: Whether to include contract removal entries
+        active_only: Whether to only return currently active contracts
+        limit: Maximum number of contracts to return
 
     Returns:
         A list of Contract objects for the specified player
     """
-    return get_contracts(player=player, **kwargs)
+    return get_contracts(
+        player=player,
+        include_removals=include_removals,
+        active_only=active_only,
+        limit=limit,
+    )
 
 
 def get_team_contracts(
@@ -185,28 +191,42 @@ def get_team_contracts(
     return get_contracts(team=team, active_only=active_only, **kwargs)
 
 
-def get_active_contracts(team: str = None, **kwargs) -> List[Contract]:
+def get_active_contracts(
+    team: str = None,
+    player: str = None,
+    limit: int = None,
+) -> List[Contract]:
     """Returns currently active contracts.
 
     Args:
         team: Team to filter by (optional)
-        **kwargs: Additional query parameters
+        player: Player to filter by (optional)
+        limit: Maximum number of contracts to return
 
     Returns:
         A list of active Contract objects
     """
-    return get_contracts(team=team, active_only=True, **kwargs)
+    return get_contracts(
+        team=team,
+        player=player,
+        active_only=True,
+        limit=limit,
+    )
 
 
 def get_expiring_contracts(
-    days: int = 30, team: str = None, **kwargs
+    days: int = 30,
+    team: str = None,
+    player: str = None,
+    limit: int = None,
 ) -> List[Contract]:
     """Returns contracts expiring within the specified number of days.
 
     Args:
         days: Number of days to look ahead (default: 30)
         team: Team to filter by (optional)
-        **kwargs: Additional query parameters
+        player: Player to filter by (optional)
+        limit: Maximum number of contracts to return
 
     Returns:
         A list of Contract objects expiring soon
@@ -214,10 +234,12 @@ def get_expiring_contracts(
     try:
         where_conditions = []
 
-        # Build team filter
-        team_where = QueryBuilder.build_where("Contracts", {"Team": team})
-        if team_where:
-            where_conditions.append(team_where)
+        # Build team and player filters
+        filters_where = QueryBuilder.build_where(
+            "Contracts", {"Team": team, "Player": player}
+        )
+        if filters_where:
+            where_conditions.append(filters_where)
 
         # Get contracts expiring within the specified days
         current_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -241,24 +263,26 @@ def get_expiring_contracts(
             fields=",".join(contracts_fields),
             where=where_clause,
             order_by="Contracts.ContractEnd ASC",
-            **kwargs,
         )
 
-        return [_parse_contract_data(contract) for contract in contracts]
+        parsed_contracts = [_parse_contract_data(contract) for contract in contracts]
+        return parsed_contracts[:limit] if limit else parsed_contracts
 
     except Exception as e:
         raise RuntimeError(f"Failed to fetch expiring contracts: {str(e)}")
 
 
 def get_contract_removals(
-    player: str = None, team: str = None, **kwargs
+    player: str = None,
+    team: str = None,
+    limit: int = None,
 ) -> List[Contract]:
     """Returns contract removal entries.
 
     Args:
         player: Player to filter by (optional)
         team: Team to filter by (optional)
-        **kwargs: Additional query parameters
+        limit: Maximum number of contracts to return
 
     Returns:
         A list of Contract objects representing removals
@@ -284,10 +308,10 @@ def get_contract_removals(
             fields=",".join(contracts_fields),
             where=where_clause,
             order_by="Contracts.ContractEnd DESC",
-            **kwargs,
         )
 
-        return [_parse_contract_data(contract) for contract in contracts]
+        parsed_contracts = [_parse_contract_data(contract) for contract in contracts]
+        return parsed_contracts[:limit] if limit else parsed_contracts
 
     except Exception as e:
         raise RuntimeError(f"Failed to fetch contract removals: {str(e)}")

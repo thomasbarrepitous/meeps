@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "meeps"
-version = "0.1.1"
+version = "0.2.0"
 description = "Advanced League of Legends esports analytics library with player performance statistics, contract tracking, and comprehensive tournament data"
 authors = ["ThomasBP <barrepitousthomas@gmail.com>", "Tolki <gary.mialaret@gmail.com>"]
 license = "MIT"

@@ -119,29 +119,32 @@ Game data uses external `lol_dto` package while newer parsers define inline data
 ## Technical Debt Checklist
 
 ### Security
-- [ ] `tournament_roster_parser.py:24-34` - Migrate to QueryBuilder
-- [ ] `game_parser.py:101` - Escape tournament parameter
-- [ ] `game_parser.py:147` - Escape game_id parameter
-- [ ] `game_parser.py:165` - Escape team parameter
-- [ ] `player_parser.py:279` - Escape player_name parameter
-- [ ] `team_parser.py:70-76` - Migrate to QueryBuilder
+- [x] `tournament_roster_parser.py:24-34` - Migrate to QueryBuilder
+- [x] `game_parser.py:101` - Escape tournament parameter
+- [x] `game_parser.py:147` - Escape game_id parameter
+- [x] `game_parser.py:165` - Escape team parameter
+- [x] `player_parser.py:279` - Escape player_name parameter
+- [x] `team_parser.py:70-76` - Migrate to QueryBuilder
 
 ### API Quality
-- [ ] `tournament_roster_parser.py` - Return typed dataclass instead of Dict
-- [ ] Create `meeps/enums.py` with ItemTier, ChampionResource, Role enums
-- [ ] `standings_parser.py` - Replace **kwargs with explicit parameters
-- [ ] `champions_parser.py` - Replace **kwargs with explicit parameters
-- [ ] `items_parser.py` - Replace **kwargs with explicit parameters
-- [ ] `roster_changes_parser.py` - Replace **kwargs with explicit parameters
+- [x] `tournament_roster_parser.py` - Return typed dataclass instead of Dict
+- [x] Create `meeps/enums.py` with ItemTier, ChampionResource, Role enums
+- [x] `standings_parser.py` - Replace **kwargs with explicit parameters
+- [x] `champions_parser.py` - Replace **kwargs with explicit parameters
+- [x] `items_parser.py` - Replace **kwargs with explicit parameters
+- [x] `roster_changes_parser.py` - Replace **kwargs with explicit parameters
+- [x] `game_parser.py` - Replace **kwargs with explicit parameters
+- [x] `team_parser.py` - Replace **kwargs with explicit parameters
+- [x] `contracts_parser.py` - Replace **kwargs with explicit parameters
 
 ### Data Models
-- [ ] `items_parser.py` - Remove duplicate `attack_damage` field
-- [ ] `roster_changes_parser.py` - Use UTC-aware datetimes
+- [x] `items_parser.py` - Remove duplicate `attack_damage` field
+- [x] `roster_changes_parser.py` - Use UTC-aware datetimes
 - [ ] Document which model pattern to use for new code
 
 ### Test Coverage
-- [ ] Add `test_player_parser.py`
-- [ ] Add `test_query_builder.py`
+- [x] Add `test_player_parser.py`
+- [x] Add `test_query_builder.py`
 - [ ] Add `test_tournament_roster_parser.py`
 - [ ] Add `tests/transmuters/` test directory
 - [ ] Add `test_transmuters_game.py`

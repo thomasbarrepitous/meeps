@@ -41,7 +41,8 @@ def get_tournaments(
     year: int = None,
     tournament_level: str = "Primary",
     is_playoffs: bool = None,
-    **kwargs,
+    order_by: str = None,
+    limit: int = None,
 ) -> List[LeaguepediaTournament]:
     """Returns a list of tournaments.
 
@@ -53,9 +54,11 @@ def get_tournaments(
         year: Year to filter on. Defaults to None.
         tournament_level: Primary, Secondary, Major, Secondary, Showmatch. Defaults to Primary.
         is_playoffs: Can be used to filter between playoffs and regular season tournaments.
+        order_by: SQL ORDER BY clause (e.g., "Tournaments.DateStart DESC").
+        limit: Maximum number of tournaments to return.
 
     Returns:
-        A list of tournaments dictionaries.
+        A list of LeaguepediaTournament objects.
     """
     # We need to cast is_playoffs as an integer for the cargoquery
     if is_playoffs is not None:
@@ -72,35 +75,48 @@ def get_tournaments(
         }
     )
 
+    query_kwargs = {}
+    if order_by:
+        query_kwargs["order_by"] = order_by
+    if limit:
+        query_kwargs["limit"] = limit
+
     result = leaguepedia.query(
         tables="Tournaments, Leagues",
         join_on="Tournaments.League = Leagues.League",
         fields=f"Leagues.League_Short, {', '.join(f'Tournaments.{field}' for field in tournaments_fields)}",
         where=where,
-        **kwargs,
+        **query_kwargs,
     )
 
     return [transmute_tournament(tournament) for tournament in result]
 
 
-def get_games(tournament_overview_page=None, **kwargs) -> List[LolGame]:
+def get_games(
+    tournament_overview_page: str = None,
+    limit: int = None,
+) -> List[LolGame]:
     """Returns the list of games played in a tournament.
 
     Returns basic information about all games played in a tournament.
 
     Args:
-        tournament_overview_page: tournament overview page, acquired from get_tournaments().
+        tournament_overview_page: Tournament overview page, acquired from get_tournaments().
+        limit: Maximum number of games to return.
 
     Returns:
         A list of LolGame with basic game information.
     """
+    query_kwargs = {}
+    if limit:
+        query_kwargs["limit"] = limit
 
     games = leaguepedia.query(
         tables="ScoreboardGames",
         fields=", ".join(game_fields),
         where=QueryBuilder.build_where("ScoreboardGames", {"OverviewPage": tournament_overview_page}),
         order_by="ScoreboardGames.DateTime_UTC",
-        **kwargs,
+        **query_kwargs,
     )
 
     return [transmute_game(game) for game in games]

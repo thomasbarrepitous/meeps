@@ -42,7 +42,7 @@ def _clean_player_name(player_name: str) -> str:
     return player_name
 
 
-def get_active_players(team_name: str, **kwargs) -> List[TeamPlayer]:
+def get_active_players(team_name: str, date: Optional[str] = None) -> List[TeamPlayer]:
     """
     Retrieves the active players for a given team from Leaguepedia.
 
@@ -51,11 +51,12 @@ def get_active_players(team_name: str, **kwargs) -> List[TeamPlayer]:
     (Top, Jungle, Mid, Bot, Support).
 
     Args:
-        team_name (str): The name of the team to query active players for.
-        date (str): The date to query active players for. (Optional)
+        team_name: The name of the team to query active players for.
+        date: The date to query active players for (format: YYYY-MM-DD). If provided, returns
+            the roster as of that date. If None, returns current roster.
 
     Returns:
-        List[TeamPlayer]: A list of TeamPlayer objects representing the current active roster.
+        A list of TeamPlayer objects representing the active roster.
 
     Raises:
         ValueError: If the team_name is empty or None
@@ -65,7 +66,6 @@ def get_active_players(team_name: str, **kwargs) -> List[TeamPlayer]:
         raise ValueError("Team name cannot be empty")
 
     active_players: List[TeamPlayer] = []
-    date = kwargs.get("date")
 
     try:
         # Build where clause with QueryBuilder
