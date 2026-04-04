@@ -465,5 +465,124 @@ poetry run python -m pytest tests/ --cov=meeps -m "not api"
 ```
 
 **Performance expectations:**
-- Fast tests: ~210 tests, <10 seconds
+- Fast tests: ~282 tests, <1 second
 - API tests: ~11 tests, 2-5 minutes
+
+---
+
+## PyPI Release Checklist
+
+### Current Status (v0.2.0)
+
+| Category | Status | Notes |
+|----------|--------|-------|
+| **Package Metadata** | ⚠️ Needs Update | pyproject.toml uses deprecated Poetry 1.x format |
+| **README.md** | ✅ Ready | Comprehensive documentation with examples |
+| **LICENSE** | ⚠️ Review | Copyright says "2020 Tolki" - consider updating |
+| **CHANGELOG.md** | ❌ Missing | Should document version history |
+| **Test Coverage** | ⚠️ 81% | Some modules need more coverage |
+| **Type Hints** | ⚠️ No py.typed | Package not marked as typed |
+| **Version Export** | ❌ Missing | `__version__` not in `__init__.py` |
+
+### Pre-Release Tasks
+
+#### Required
+
+- [ ] **Add `__version__` to `__init__.py`**
+  ```python
+  __version__ = "0.2.0"
+  ```
+
+- [ ] **Create CHANGELOG.md**
+  ```markdown
+  # Changelog
+
+  ## [0.2.0] - 2026-04-04
+  ### Added
+  - Explicit parameters replacing **kwargs in all public APIs
+  - test_query_builder.py with 36 tests
+  - test_player_parser.py with 40 tests
+  - Enums: ItemTier, ChampionResource, ChampionAttribute, Role
+
+  ### Fixed
+  - SQL injection vulnerabilities in all parsers
+  - UTC datetime standardization
+
+  ## [0.1.1] - Previous
+  - Initial enhanced fork with contracts, standings, champions, items, roster changes
+  ```
+
+- [ ] **Update pyproject.toml to PEP 621 format**
+  Poetry 2.x warns about deprecated fields. Migrate to:
+  ```toml
+  [project]
+  name = "meeps"
+  version = "0.2.0"
+  description = "..."
+  authors = [{name = "...", email = "..."}]
+  license = {text = "MIT"}
+  readme = "README.md"
+  requires-python = ">=3.9"
+
+  [project.urls]
+  Homepage = "https://github.com/thomasbarrepitous/meeps"
+  Repository = "https://github.com/thomasbarrepitous/meeps"
+  ```
+
+- [ ] **Verify all exports work**
+  ```bash
+  poetry run python -c "import meeps; print(meeps.__version__)"
+  ```
+
+#### Recommended
+
+- [ ] **Add py.typed marker** for type checking support
+  ```bash
+  touch meeps/py.typed
+  ```
+
+- [ ] **Update LICENSE copyright**
+  Consider adding current maintainers:
+  ```
+  Copyright (c) 2020 Tolki
+  Copyright (c) 2024-2026 Thomas Barrepitous
+  ```
+
+- [ ] **Improve test coverage** (currently 81%)
+  Low coverage modules:
+  | Module | Coverage | Priority |
+  |--------|----------|----------|
+  | `team_parser.py` | 25% | High |
+  | `game_parser.py` | 34% | High |
+  | `leaguepedia.py` | 42% | Medium |
+  | `transmuters/game.py` | 47% | Low |
+  | `tournament_roster_parser.py` | 48% | Medium |
+
+- [ ] **Run full test suite including API tests**
+  ```bash
+  poetry run python -m pytest tests/ -m "api or not api" -v
+  ```
+
+### Publishing to PyPI
+
+```bash
+# Build the package
+poetry build
+
+# Test on TestPyPI first
+poetry config repositories.testpypi https://test.pypi.org/legacy/
+poetry publish -r testpypi
+
+# Verify installation from TestPyPI
+pip install --index-url https://test.pypi.org/simple/ meeps
+
+# Publish to PyPI
+poetry publish
+```
+
+### Post-Release
+
+- [ ] Create GitHub release with changelog
+- [ ] Tag the release: `git tag v0.2.0 && git push --tags`
+- [ ] Verify PyPI page looks correct
+- [ ] Test installation: `pip install meeps`
