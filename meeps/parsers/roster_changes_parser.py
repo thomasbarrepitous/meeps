@@ -1,6 +1,6 @@
 import dataclasses
 from typing import List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import enum
 
 from meeps.site.leaguepedia import leaguepedia
@@ -119,7 +119,12 @@ def _parse_roster_change_data(data: dict) -> RosterChange:
 
     def parse_datetime(date_str: Optional[str]) -> Optional[datetime]:
         try:
-            return datetime.fromisoformat(date_str) if date_str else None
+            if date_str:
+                dt = datetime.fromisoformat(date_str)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                return dt
+            return None
         except (ValueError, AttributeError):
             return None
 
@@ -277,8 +282,8 @@ def get_recent_roster_changes(
     Returns:
         A list of recent RosterChange objects
     """
-    end_date = datetime.now().strftime("%Y-%m-%d")
-    start_date = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+    end_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    start_date = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%d")
 
     return get_roster_changes(
         team=team, start_date=start_date, end_date=end_date, order_by=order_by
@@ -329,7 +334,7 @@ def get_retirements(order_by: str = None) -> List[RosterChange]:
         A list of RosterChange objects representing retirements
     """
     # Use the specialized retirement filter
-    where_clause = "RosterChanges.IsRetirement='Yes'"
+    where_clause = QueryBuilder.build_where("RosterChanges", {"IsRetirement": "Yes"})
 
     try:
         changes = leaguepedia.query(

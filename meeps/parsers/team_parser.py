@@ -2,8 +2,9 @@ import dataclasses
 from typing import Optional, List, Set
 from meeps.site.leaguepedia import leaguepedia
 from meeps.parsers.query_builder import QueryBuilder
+from meeps.enums import Role
 
-VALID_ROLES: Set[str] = {"Top", "Jungle", "Mid", "Bot", "Support"}
+VALID_ROLES: Set[str] = {role.value for role in Role}
 
 
 @dataclasses.dataclass
@@ -67,16 +68,23 @@ def get_active_players(team_name: str, **kwargs) -> List[TeamPlayer]:
     date = kwargs.get("date")
 
     try:
-        # Build where clause with escaping
-        escaped_team = QueryBuilder.escape(team_name)
-        where_clause = f"T.Team = '{escaped_team}'"
+        # Build where clause with QueryBuilder
+        where_conditions = []
 
-        # Handle date filtering
+        # Team filter
+        team_where = QueryBuilder.build_where("T", {"Team": team_name})
+        if team_where:
+            where_conditions.append(team_where)
+
+        # Date filter
         if date:
             escaped_date = QueryBuilder.escape(date)
-            where_clause += f" AND T.DateJoin <= '{escaped_date}' AND (T.DateLeave IS NULL OR T.DateLeave > '{escaped_date}')"
+            where_conditions.append(f"T.DateJoin <= '{escaped_date}'")
+            where_conditions.append(f"(T.DateLeave IS NULL OR T.DateLeave > '{escaped_date}')")
         else:
-            where_clause += " AND T.DateLeave IS NULL"
+            where_conditions.append("T.DateLeave IS NULL")
+
+        where_clause = " AND ".join(where_conditions)
 
         # Query active players with optional date filter
         query = leaguepedia.query(

@@ -6,6 +6,7 @@ from typing import List
 
 import meeps as lp
 from meeps.parsers.items_parser import Item
+from meeps.enums import ItemTier
 
 from .conftest import TestConstants, assert_valid_dataclass_instance, assert_mock_called_with_table
 
@@ -181,16 +182,30 @@ class TestItemsAPI:
         assert_mock_called_with_table(mock_leaguepedia_query, "Items")
     
     @pytest.mark.integration
-    def test_get_items_with_tier_filter(self, mock_leaguepedia_query, items_mock_data):
-        """Test get_items with tier filter."""
+    def test_get_items_with_tier_filter_string(self, mock_leaguepedia_query, items_mock_data):
+        """Test get_items with tier filter using string."""
         mock_leaguepedia_query.return_value = items_mock_data
-        
+
         items = lp.get_items(tier="Legendary")
-        
+
         assert len(items) == 3
         assert all(item.tier == "Legendary" for item in items)
         mock_leaguepedia_query.assert_called_once()
         # Verify WHERE clause includes tier filter
+        call_kwargs = mock_leaguepedia_query.call_args[1]
+        assert "Tier='Legendary'" in call_kwargs['where']
+
+    @pytest.mark.integration
+    def test_get_items_with_tier_filter_enum(self, mock_leaguepedia_query, items_mock_data):
+        """Test get_items with tier filter using ItemTier enum."""
+        mock_leaguepedia_query.return_value = items_mock_data
+
+        items = lp.get_items(tier=ItemTier.LEGENDARY)
+
+        assert len(items) == 3
+        assert all(item.tier == "Legendary" for item in items)
+        mock_leaguepedia_query.assert_called_once()
+        # Verify WHERE clause includes tier filter (enum value converted to string)
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert "Tier='Legendary'" in call_kwargs['where']
     
@@ -220,12 +235,23 @@ class TestItemsAPI:
         assert item is None
     
     @pytest.mark.integration
-    def test_get_items_by_tier(self, mock_leaguepedia_query, items_mock_data):
-        """Test get_items_by_tier convenience function."""
+    def test_get_items_by_tier_string(self, mock_leaguepedia_query, items_mock_data):
+        """Test get_items_by_tier convenience function with string."""
         mock_leaguepedia_query.return_value = items_mock_data
-        
+
         items = lp.get_items_by_tier("Legendary")
-        
+
+        assert len(items) == 3
+        assert all(item.tier == "Legendary" for item in items)
+        assert_mock_called_with_table(mock_leaguepedia_query, "Items")
+
+    @pytest.mark.integration
+    def test_get_items_by_tier_enum(self, mock_leaguepedia_query, items_mock_data):
+        """Test get_items_by_tier convenience function with ItemTier enum."""
+        mock_leaguepedia_query.return_value = items_mock_data
+
+        items = lp.get_items_by_tier(ItemTier.LEGENDARY)
+
         assert len(items) == 3
         assert all(item.tier == "Legendary" for item in items)
         assert_mock_called_with_table(mock_leaguepedia_query, "Items")

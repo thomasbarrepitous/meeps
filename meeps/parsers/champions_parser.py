@@ -1,5 +1,5 @@
 import dataclasses
-from typing import List, Optional
+from typing import List, Optional, Union
 from datetime import datetime
 
 from meeps.site.leaguepedia import leaguepedia
@@ -7,6 +7,7 @@ from meeps.transmuters.field_names import (
     champions_fields,
 )
 from meeps.parsers.query_builder import QueryBuilder
+from meeps.enums import ChampionResource, ChampionAttribute
 
 
 @dataclasses.dataclass
@@ -152,13 +153,15 @@ def _parse_champion_data(data: dict) -> Champion:
 
 
 def get_champions(
-    resource: str = None, attributes: str = None, order_by: str = None
+    resource: Union[ChampionResource, str] = None,
+    attributes: Union[ChampionAttribute, str] = None,
+    order_by: str = None,
 ) -> List[Champion]:
     """Returns champion information from Leaguepedia.
 
     Args:
-        resource: Resource type to filter by (e.g., "Mana", "Energy")
-        attributes: Attribute to filter by (e.g., "Fighter", "Tank", "Assassin")
+        resource: Resource type to filter by (e.g., ChampionResource.MANA or "Mana")
+        attributes: Attribute to filter by (e.g., ChampionAttribute.FIGHTER or "Fighter")
         order_by: Optional ordering (e.g., "Champions.ReleaseDate DESC")
 
     Returns:
@@ -168,17 +171,20 @@ def get_champions(
         RuntimeError: If the Leaguepedia query fails
     """
     try:
+        resource_value = resource.value if isinstance(resource, ChampionResource) else resource
+        attributes_value = attributes.value if isinstance(attributes, ChampionAttribute) else attributes
+
         where_conditions = []
 
         # Build exact match condition for resource
-        resource_where = QueryBuilder.build_where("Champions", {"Resource": resource})
+        resource_where = QueryBuilder.build_where("Champions", {"Resource": resource_value})
         if resource_where:
             where_conditions.append(resource_where)
 
         # Build LIKE condition for attributes
-        if attributes:
+        if attributes_value:
             where_conditions.append(
-                QueryBuilder.build_like_condition("Champions", "Attributes", attributes)
+                QueryBuilder.build_like_condition("Champions", "Attributes", attributes_value)
             )
 
         where_clause = " AND ".join(where_conditions) if where_conditions else None
@@ -223,11 +229,11 @@ def get_champion_by_name(champion_name: str) -> Optional[Champion]:
         raise RuntimeError(f"Failed to fetch champion {champion_name}: {str(e)}")
 
 
-def get_champions_by_attributes(attributes: str) -> List[Champion]:
+def get_champions_by_attributes(attributes: Union[ChampionAttribute, str]) -> List[Champion]:
     """Returns all champions with a specific attribute.
 
     Args:
-        attributes: Attribute (e.g., "Fighter", "Tank", "Assassin", "Mage", "Support", "Marksman")
+        attributes: Attribute (e.g., ChampionAttribute.FIGHTER or "Fighter")
 
     Returns:
         List of Champion objects with the specified attribute
@@ -235,11 +241,11 @@ def get_champions_by_attributes(attributes: str) -> List[Champion]:
     return get_champions(attributes=attributes)
 
 
-def get_champions_by_resource(resource: str) -> List[Champion]:
+def get_champions_by_resource(resource: Union[ChampionResource, str]) -> List[Champion]:
     """Returns all champions with a specific resource type.
 
     Args:
-        resource: Resource type (e.g., "Mana", "Energy", "Fury", "None")
+        resource: Resource type (e.g., ChampionResource.MANA or "Mana")
 
     Returns:
         List of Champion objects with the specified resource

@@ -1,6 +1,6 @@
 import dataclasses
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 from meeps.site.leaguepedia import leaguepedia
 from meeps.transmuters.field_names import (
@@ -35,21 +35,21 @@ class Contract:
         if self.is_removal:
             return False
         if self.contract_end:
-            return self.contract_end > datetime.now()
+            return self.contract_end > datetime.now(timezone.utc)
         return None
 
     @property
     def is_expired(self) -> Optional[bool]:
         """Returns True if the contract has expired."""
         if self.contract_end:
-            return self.contract_end <= datetime.now()
+            return self.contract_end <= datetime.now(timezone.utc)
         return None
 
     @property
     def days_until_expiry(self) -> Optional[int]:
         """Returns the number of days until contract expiry (negative if expired)."""
         if self.contract_end:
-            delta = self.contract_end - datetime.now()
+            delta = self.contract_end - datetime.now(timezone.utc)
             return delta.days
         return None
 
@@ -59,7 +59,12 @@ def _parse_contract_data(data: dict) -> Contract:
 
     def parse_datetime(date_str: Optional[str]) -> Optional[datetime]:
         try:
-            return datetime.fromisoformat(date_str) if date_str else None
+            if date_str:
+                dt = datetime.fromisoformat(date_str)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                return dt
+            return None
         except (ValueError, AttributeError):
             return None
 
@@ -121,8 +126,9 @@ def get_contracts(
             )
 
         if active_only:
-            current_date = datetime.now().strftime("%Y-%m-%d")
-            where_conditions.append(f"Contracts.ContractEnd >= '{current_date}'")
+            current_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            escaped_date = QueryBuilder.escape(current_date)
+            where_conditions.append(f"Contracts.ContractEnd >= '{escaped_date}'")
             where_conditions.append(
                 "Contracts.IsRemoval IS NULL OR Contracts.IsRemoval='0'"
             )
@@ -214,11 +220,8 @@ def get_expiring_contracts(
             where_conditions.append(team_where)
 
         # Get contracts expiring within the specified days
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        end_date = datetime.now().replace(hour=23, minute=59, second=59).timestamp() + (
-            days * 24 * 60 * 60
-        )
-        end_date_str = datetime.fromtimestamp(end_date).strftime("%Y-%m-%d")
+        current_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        end_date_str = (datetime.now(timezone.utc) + timedelta(days=days)).strftime("%Y-%m-%d")
 
         # Build date range condition
         date_range = QueryBuilder.build_range_condition(

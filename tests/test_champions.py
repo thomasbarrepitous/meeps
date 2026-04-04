@@ -7,6 +7,7 @@ from typing import List
 
 import meeps as lp
 from meeps.parsers.champions_parser import Champion
+from meeps.enums import ChampionResource, ChampionAttribute
 
 from .conftest import TestConstants, assert_valid_dataclass_instance, assert_mock_called_with_table
 
@@ -174,34 +175,66 @@ class TestChampionsAPI:
         assert_mock_called_with_table(mock_leaguepedia_query, "Champions")
     
     @pytest.mark.integration
-    def test_get_champions_with_resource_filter(self, mock_leaguepedia_query, champions_mock_data):
-        """Test get_champions with resource filter."""
+    def test_get_champions_with_resource_filter_string(self, mock_leaguepedia_query, champions_mock_data):
+        """Test get_champions with resource filter using string."""
         # Return only mana champions
         filtered_data = [champions_mock_data[0]]  # Jinx uses Mana
         mock_leaguepedia_query.return_value = filtered_data
-        
+
         champions = lp.get_champions(resource="Mana")
-        
+
         assert len(champions) == 1
         assert champions[0].resource == "Mana"
         mock_leaguepedia_query.assert_called_once()
         # Verify WHERE clause includes resource filter
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert "Resource='Mana'" in call_kwargs['where']
+
+    @pytest.mark.integration
+    def test_get_champions_with_resource_filter_enum(self, mock_leaguepedia_query, champions_mock_data):
+        """Test get_champions with resource filter using ChampionResource enum."""
+        # Return only mana champions
+        filtered_data = [champions_mock_data[0]]  # Jinx uses Mana
+        mock_leaguepedia_query.return_value = filtered_data
+
+        champions = lp.get_champions(resource=ChampionResource.MANA)
+
+        assert len(champions) == 1
+        assert champions[0].resource == "Mana"
+        mock_leaguepedia_query.assert_called_once()
+        # Verify WHERE clause includes resource filter (enum value converted to string)
+        call_kwargs = mock_leaguepedia_query.call_args[1]
+        assert "Resource='Mana'" in call_kwargs['where']
     
     @pytest.mark.integration
-    def test_get_champions_with_attributes_filter(self, mock_leaguepedia_query, champions_mock_data):
-        """Test get_champions with attributes filter."""
+    def test_get_champions_with_attributes_filter_string(self, mock_leaguepedia_query, champions_mock_data):
+        """Test get_champions with attributes filter using string."""
         # Return only marksman champions
         filtered_data = [champions_mock_data[0]]  # Jinx is Marksman
         mock_leaguepedia_query.return_value = filtered_data
-        
+
         champions = lp.get_champions(attributes="Marksman")
-        
+
         assert len(champions) == 1
         assert "Marksman" in champions[0].attributes
         mock_leaguepedia_query.assert_called_once()
         # Verify WHERE clause uses LIKE for attributes
+        call_kwargs = mock_leaguepedia_query.call_args[1]
+        assert "LIKE '%Marksman%'" in call_kwargs['where']
+
+    @pytest.mark.integration
+    def test_get_champions_with_attributes_filter_enum(self, mock_leaguepedia_query, champions_mock_data):
+        """Test get_champions with attributes filter using ChampionAttribute enum."""
+        # Return only marksman champions
+        filtered_data = [champions_mock_data[0]]  # Jinx is Marksman
+        mock_leaguepedia_query.return_value = filtered_data
+
+        champions = lp.get_champions(attributes=ChampionAttribute.MARKSMAN)
+
+        assert len(champions) == 1
+        assert "Marksman" in champions[0].attributes
+        mock_leaguepedia_query.assert_called_once()
+        # Verify WHERE clause uses LIKE for attributes (enum value converted to string)
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert "LIKE '%Marksman%'" in call_kwargs['where']
     
@@ -231,25 +264,49 @@ class TestChampionsAPI:
         assert champion is None
     
     @pytest.mark.integration
-    def test_get_champions_by_attributes(self, mock_leaguepedia_query, champions_mock_data):
-        """Test get_champions_by_attributes convenience function."""
+    def test_get_champions_by_attributes_string(self, mock_leaguepedia_query, champions_mock_data):
+        """Test get_champions_by_attributes convenience function with string."""
         filtered_data = [champions_mock_data[1]]  # Yasuo has Fighter,Assassin
         mock_leaguepedia_query.return_value = filtered_data
-        
+
         champions = lp.get_champions_by_attributes("Fighter")
-        
+
+        assert len(champions) == 1
+        assert "Fighter" in champions[0].attributes
+        assert_mock_called_with_table(mock_leaguepedia_query, "Champions")
+
+    @pytest.mark.integration
+    def test_get_champions_by_attributes_enum(self, mock_leaguepedia_query, champions_mock_data):
+        """Test get_champions_by_attributes convenience function with ChampionAttribute enum."""
+        filtered_data = [champions_mock_data[1]]  # Yasuo has Fighter,Assassin
+        mock_leaguepedia_query.return_value = filtered_data
+
+        champions = lp.get_champions_by_attributes(ChampionAttribute.FIGHTER)
+
         assert len(champions) == 1
         assert "Fighter" in champions[0].attributes
         assert_mock_called_with_table(mock_leaguepedia_query, "Champions")
     
     @pytest.mark.integration
-    def test_get_champions_by_resource(self, mock_leaguepedia_query, champions_mock_data):
-        """Test get_champions_by_resource convenience function."""
+    def test_get_champions_by_resource_string(self, mock_leaguepedia_query, champions_mock_data):
+        """Test get_champions_by_resource convenience function with string."""
         filtered_data = [champions_mock_data[1]]  # Yasuo uses Flow
         mock_leaguepedia_query.return_value = filtered_data
-        
+
         champions = lp.get_champions_by_resource("Flow")
-        
+
+        assert len(champions) == 1
+        assert champions[0].resource == "Flow"
+        assert_mock_called_with_table(mock_leaguepedia_query, "Champions")
+
+    @pytest.mark.integration
+    def test_get_champions_by_resource_enum(self, mock_leaguepedia_query, champions_mock_data):
+        """Test get_champions_by_resource convenience function with ChampionResource enum."""
+        filtered_data = [champions_mock_data[1]]  # Yasuo uses Flow
+        mock_leaguepedia_query.return_value = filtered_data
+
+        champions = lp.get_champions_by_resource(ChampionResource.FLOW)
+
         assert len(champions) == 1
         assert champions[0].resource == "Flow"
         assert_mock_called_with_table(mock_leaguepedia_query, "Champions")

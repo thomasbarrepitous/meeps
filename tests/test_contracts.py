@@ -2,7 +2,7 @@
 
 import pytest
 from unittest.mock import Mock, patch
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from meeps.parsers.contracts_parser import (
     Contract,
@@ -56,21 +56,21 @@ class TestContractDataclass:
         """Test the is_active property logic."""
         # Future contract (should be active)
         future_contract = Contract(
-            contract_end=datetime.now() + timedelta(days=30),
+            contract_end=datetime.now(timezone.utc) + timedelta(days=30),
             is_removal=False
         )
         assert future_contract.is_active is True
 
         # Past contract (should be inactive)
         past_contract = Contract(
-            contract_end=datetime.now() - timedelta(days=30),
+            contract_end=datetime.now(timezone.utc) - timedelta(days=30),
             is_removal=False
         )
         assert past_contract.is_active is False
 
         # Removal contract (should be inactive)
         removal_contract = Contract(
-            contract_end=datetime.now() + timedelta(days=30),
+            contract_end=datetime.now(timezone.utc) + timedelta(days=30),
             is_removal=True
         )
         assert removal_contract.is_active is False
@@ -84,13 +84,13 @@ class TestContractDataclass:
         """Test the is_expired property logic."""
         # Future contract (not expired)
         future_contract = Contract(
-            contract_end=datetime.now() + timedelta(days=30)
+            contract_end=datetime.now(timezone.utc) + timedelta(days=30)
         )
         assert future_contract.is_expired is False
 
         # Past contract (expired)
         past_contract = Contract(
-            contract_end=datetime.now() - timedelta(days=30)
+            contract_end=datetime.now(timezone.utc) - timedelta(days=30)
         )
         assert past_contract.is_expired is True
 
@@ -102,12 +102,12 @@ class TestContractDataclass:
     def test_days_until_expiry_property(self):
         """Test the days_until_expiry property logic."""
         # Future contract - allow for minor time differences
-        future_date = datetime.now() + timedelta(days=30)
+        future_date = datetime.now(timezone.utc) + timedelta(days=30)
         future_contract = Contract(contract_end=future_date)
         assert 29 <= future_contract.days_until_expiry <= 30
 
         # Past contract (negative days)
-        past_date = datetime.now() - timedelta(days=15)
+        past_date = datetime.now(timezone.utc) - timedelta(days=15)
         past_contract = Contract(contract_end=past_date)
         assert 29 <= future_contract.days_until_expiry <= 30  # Should be positive
         assert -16 <= past_contract.days_until_expiry <= -14   # Should be negative (allow for minor differences)

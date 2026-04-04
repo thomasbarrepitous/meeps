@@ -1,9 +1,10 @@
 import dataclasses
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from meeps.site.leaguepedia import leaguepedia
 from meeps.transmuters.field_names import items_fields
 from meeps.parsers.query_builder import QueryBuilder
+from meeps.enums import ItemTier
 
 
 @dataclasses.dataclass
@@ -181,13 +182,13 @@ def _parse_item_data(data: dict) -> Item:
 
 
 def get_items(
-    tier: str = None,
+    tier: Union[ItemTier, str] = None,
     order_by: str = None,
 ) -> List[Item]:
     """Returns item information from Leaguepedia.
 
     Args:
-        tier: Filter by tier (e.g., "Basic", "Epic", "Legendary")
+        tier: Filter by tier (e.g., ItemTier.LEGENDARY or "Legendary")
         order_by: Optional ordering (e.g., "Items.TotalCost DESC")
 
     Returns:
@@ -197,7 +198,8 @@ def get_items(
         RuntimeError: If the Leaguepedia query fails
     """
     try:
-        where_clause = QueryBuilder.build_where("Items", {"Tier": tier})
+        tier_value = tier.value if isinstance(tier, ItemTier) else tier
+        where_clause = QueryBuilder.build_where("Items", {"Tier": tier_value})
 
         items = leaguepedia.query(
             tables="Items",
@@ -239,11 +241,11 @@ def get_item_by_name(item_name: str) -> Optional[Item]:
         raise RuntimeError(f"Failed to fetch item {item_name}: {str(e)}")
 
 
-def get_items_by_tier(tier: str) -> List[Item]:
+def get_items_by_tier(tier: Union[ItemTier, str]) -> List[Item]:
     """Returns all items of a specific tier.
 
     Args:
-        tier: Item tier (e.g., "Basic", "Epic", "Legendary", "Mythic")
+        tier: Item tier (e.g., ItemTier.LEGENDARY or "Legendary")
 
     Returns:
         List of Item objects with the specified tier
