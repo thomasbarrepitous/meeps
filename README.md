@@ -191,6 +191,70 @@ marksmen = lp.get_champions_by_attributes("Marksman")
 crit_items = lp.search_items_by_stat("Crit")
 ```
 
+## 📚 Data Sources
+
+This library queries [Leaguepedia's Cargo tables](https://lol.fandom.com/wiki/Special:CargoTables) - a structured database of League of Legends esports data.
+
+### Cargo Table Mapping
+
+| Function | Cargo Table | Description |
+|----------|-------------|-------------|
+| `get_tournaments()` | Tournaments, Leagues | Tournament metadata |
+| `get_games()` | ScoreboardGames | Match results and stats |
+| `get_game_details()` | ScoreboardGames, ScoreboardPlayers, PicksAndBansS7 | Full match data with players |
+| `get_player_by_name()` | Players | Player profiles (49 fields) |
+| `get_active_players()` | Tenures, RosterChanges | Current team rosters |
+| `get_standings()` | Standings | Tournament rankings |
+| `get_champions()` | Champions | Champion stats and attributes |
+| `get_items()` | Items | Item stats and costs |
+| `get_roster_changes()` | RosterChanges | Player transfers |
+| `get_contracts()` | Contracts | Player contract dates |
+| `get_scoreboard_players()` | ScoreboardPlayers | Individual match performance |
+| `get_tournament_rosters()` | TournamentRosters | Tournament team compositions |
+
+### Tournament Naming Convention
+
+Tournaments use the `OverviewPage` format: `{League}/{Year} Season/{Split}`
+
+| Example | Description |
+|---------|-------------|
+| `LCK/2024 Season/Summer Season` | LCK Summer 2024 |
+| `LEC/2024 Season/Spring Season` | LEC Spring 2024 |
+| `Worlds/2024 Season/Main Event` | Worlds 2024 Main Event |
+| `MSI/2024 Season/Main Event` | MSI 2024 |
+
+**Tip:** Use `get_tournaments(region, year)` to discover valid tournament names.
+
+### Field Availability
+
+Not all fields are always populated. Common optional fields:
+
+| Dataclass | Optional Fields |
+|-----------|-----------------|
+| `PlayerInfo` | `birthdate`, `contract`, social media fields, `team` (if free agent) |
+| `Champion` | `release_date`, some stat fields for newer champions |
+| `ScoreboardPlayer` | `damage_to_champions`, `vision_score` (older matches) |
+| `Contract` | `contract_end_text`, `news_id` |
+
+Always check for `None` before using these fields.
+
+### Rate Limiting
+
+Leaguepedia has rate limits. Best practices:
+
+- **Use `limit` parameter** - Don't fetch more data than needed
+- **Filter by tournament** - Avoid unbounded queries across all history
+- **Add delays for bulk operations** - 1-2 seconds between large queries
+- **Expect occasional timeouts** - The library retries automatically (3 attempts)
+
+```python
+# Good - bounded query
+games = lp.get_games("LCK/2024 Season/Summer Season", limit=10)
+
+# Slow - unbounded, fetches years of data
+games = lp.get_games()  # Avoid this
+```
+
 ## 📋 Data Types
 
 | Module | Returns | Key Properties |

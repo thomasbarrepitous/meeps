@@ -26,129 +26,52 @@ The codebase uses two distinct patterns for data models:
 
 ---
 
-## Key Improvement Areas
-
-### P0 - Security: SQL Injection Vulnerabilities
-
-Four parsers use direct string concatenation instead of the `QueryBuilder` class, creating SQL injection vectors.
-
-| File | Lines | Issue |
-|------|-------|-------|
-| `tournament_roster_parser.py` | 24-34 | Direct string concatenation for WHERE clause |
-| `game_parser.py` | 101, 147, 165 | Unescaped f-strings in query conditions |
-| `player_parser.py` | 279 | Direct string interpolation |
-| `team_parser.py` | 70-76 | Direct concatenation in query building |
-
-**Fix**: Migrate all queries to use `QueryBuilder.add_where()` which handles escaping.
-
-```python
-# Bad - vulnerable
-where = f"Team = '{team_name}'"
-
-# Good - uses QueryBuilder escaping
-builder = QueryBuilder()
-builder.add_where("Team", team_name)
-```
-
----
-
-### P1 - Public API Quality
-
-#### Untyped Return Values
-- `get_tournament_rosters()` returns `List[Dict]` instead of typed dataclass
-- Users have no IDE autocomplete or type checking for roster data
-
-#### Missing Enums for Valid Values
-Users must guess valid string values for:
-- Item tiers: "Starter", "Basic", "Epic", "Legendary", "Mythic"
-- Champion resources: "Mana", "Energy", "Flow", "Fury", etc.
-- Player roles: "Top", "Jungle", "Mid", "Bot", "Support"
-
-**Fix**: Add enums in a new `meeps/enums.py`:
-```python
-class ItemTier(str, Enum):
-    STARTER = "Starter"
-    BASIC = "Basic"
-    EPIC = "Epic"
-    LEGENDARY = "Legendary"
-    MYTHIC = "Mythic"
-```
-
-#### Undocumented **kwargs
-Functions like `get_standings(**kwargs)` accept arbitrary parameters without documenting valid options. Users can't discover what filters are available without reading source code.
-
-**Fix**: Replace `**kwargs` with explicit parameters or TypedDict.
-
----
-
-### P2 - Data Model Consistency
-
-#### Duplicate Fields in items_parser.py
-The `Item` dataclass has both `ad` and `attack_damage` fields that represent the same stat. This creates confusion about which to use.
-
-**Fix**: Remove `attack_damage`, keep `ad` for consistency with game terminology.
-
-#### Mixed DateTime Handling
-Some modules return naive datetimes, others return UTC-aware. This causes comparison bugs.
-
-| Module | Behavior |
-|--------|----------|
-| `roster_changes_parser.py` | Naive datetime |
-| `game_parser.py` | UTC-aware datetime |
-
-**Fix**: Standardize on UTC-aware datetimes throughout.
-
-#### Mixed Model Patterns
-Game data uses external `lol_dto` package while newer parsers define inline dataclasses. Consider consolidating to one approach for consistency.
-
----
-
-### P3 - Test Coverage Gaps
-
-~23% of code lines lack test coverage. Priority modules:
-
-| Module | Lines | Tests | Notes |
-|--------|-------|-------|-------|
-| `player_parser.py` | 349 | 0 | Core module, completely untested |
-| `transmuters/*` | ~536 | 0 | All transformation logic untested |
-| `query_builder.py` | 92 | 0 | Critical for SQL injection fixes |
-| `tournament_roster_parser.py` | 45 | 0 | Returns untyped data |
-
----
-
-## Technical Debt Checklist
-
-### Security
-- [x] `tournament_roster_parser.py:24-34` - Migrate to QueryBuilder
-- [x] `game_parser.py:101` - Escape tournament parameter
-- [x] `game_parser.py:147` - Escape game_id parameter
-- [x] `game_parser.py:165` - Escape team parameter
-- [x] `player_parser.py:279` - Escape player_name parameter
-- [x] `team_parser.py:70-76` - Migrate to QueryBuilder
-
-### API Quality
-- [x] `tournament_roster_parser.py` - Return typed dataclass instead of Dict
-- [x] Create `meeps/enums.py` with ItemTier, ChampionResource, Role enums
-- [x] `standings_parser.py` - Replace **kwargs with explicit parameters
-- [x] `champions_parser.py` - Replace **kwargs with explicit parameters
-- [x] `items_parser.py` - Replace **kwargs with explicit parameters
-- [x] `roster_changes_parser.py` - Replace **kwargs with explicit parameters
-- [x] `game_parser.py` - Replace **kwargs with explicit parameters
-- [x] `team_parser.py` - Replace **kwargs with explicit parameters
-- [x] `contracts_parser.py` - Replace **kwargs with explicit parameters
-
-### Data Models
-- [x] `items_parser.py` - Remove duplicate `attack_damage` field
-- [x] `roster_changes_parser.py` - Use UTC-aware datetimes
-- [ ] Document which model pattern to use for new code
+## Remaining Work
 
 ### Test Coverage
-- [x] Add `test_player_parser.py`
-- [x] Add `test_query_builder.py`
+
+Current coverage: ~81%. Priority modules needing tests:
+
+| Module | Coverage | Priority |
+|--------|----------|----------|
+| `team_parser.py` | 25% | High |
+| `game_parser.py` | 34% | High |
+| `leaguepedia.py` | 42% | Medium |
+| `tournament_roster_parser.py` | 48% | Medium |
+| `transmuters/*` | ~47% | Low |
+
+### Documentation
+- [ ] Document which model pattern to use for new code (internal dataclasses vs lol_dto)
+
+### Test Files to Add
 - [ ] Add `test_tournament_roster_parser.py`
 - [ ] Add `tests/transmuters/` test directory
 - [ ] Add `test_transmuters_game.py`
 - [ ] Add `test_transmuters_picks_bans.py`
+
+---
+
+## Completed Work (v0.2.0)
+
+### Security - SQL Injection Fixes
+All parsers now use `QueryBuilder` for safe query construction:
+- `tournament_roster_parser.py` - Migrated to QueryBuilder
+- `game_parser.py` - All parameters escaped
+- `player_parser.py` - Parameters escaped
+- `team_parser.py` - Migrated to QueryBuilder
+
+### API Quality Improvements
+- All public APIs use explicit parameters instead of `**kwargs`
+- `get_tournament_rosters()` returns typed `TournamentRoster` dataclass
+- Added `meeps/enums.py` with `ItemTier`, `ChampionResource`, `ChampionAttribute`, `Role` enums
+
+### Data Model Fixes
+- Removed duplicate `attack_damage` field from `Item` (kept `ad`)
+- Standardized on UTC-aware datetimes throughout
+
+### Test Coverage Added
+- `test_player_parser.py` - 40 tests
+- `test_query_builder.py` - 36 tests
 
 ---
 
@@ -479,39 +402,17 @@ poetry run python -m pytest tests/ --cov=meeps -m "not api"
 | **Package Metadata** | ⚠️ Needs Update | pyproject.toml uses deprecated Poetry 1.x format |
 | **README.md** | ✅ Ready | Comprehensive documentation with examples |
 | **LICENSE** | ⚠️ Review | Copyright says "2020 Tolki" - consider updating |
-| **CHANGELOG.md** | ❌ Missing | Should document version history |
+| **CHANGELOG.md** | ✅ Ready | Documents v0.1.0, v0.1.1, v0.2.0 |
 | **Test Coverage** | ⚠️ 81% | Some modules need more coverage |
-| **Type Hints** | ⚠️ No py.typed | Package not marked as typed |
-| **Version Export** | ❌ Missing | `__version__` not in `__init__.py` |
+| **Type Hints** | ✅ Ready | `py.typed` marker present |
+| **Version Export** | ✅ Ready | `__version__ = "0.2.0"` in `__init__.py` |
 
 ### Pre-Release Tasks
 
 #### Required
 
-- [ ] **Add `__version__` to `__init__.py`**
-  ```python
-  __version__ = "0.2.0"
-  ```
-
-- [ ] **Create CHANGELOG.md**
-  ```markdown
-  # Changelog
-
-  ## [0.2.0] - 2026-04-04
-  ### Added
-  - Explicit parameters replacing **kwargs in all public APIs
-  - test_query_builder.py with 36 tests
-  - test_player_parser.py with 40 tests
-  - Enums: ItemTier, ChampionResource, ChampionAttribute, Role
-
-  ### Fixed
-  - SQL injection vulnerabilities in all parsers
-  - UTC datetime standardization
-
-  ## [0.1.1] - Previous
-  - Initial enhanced fork with contracts, standings, champions, items, roster changes
-  ```
-
+- [x] **Add `__version__` to `__init__.py`** - Done
+- [x] **Create CHANGELOG.md** - Done
 - [ ] **Update pyproject.toml to PEP 621 format**
   Poetry 2.x warns about deprecated fields. Migrate to:
   ```toml
@@ -536,11 +437,7 @@ poetry run python -m pytest tests/ --cov=meeps -m "not api"
 
 #### Recommended
 
-- [ ] **Add py.typed marker** for type checking support
-  ```bash
-  touch meeps/py.typed
-  ```
-
+- [x] **Add py.typed marker** - Done
 - [ ] **Update LICENSE copyright**
   Consider adding current maintainers:
   ```
