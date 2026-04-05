@@ -380,3 +380,30 @@ tenures_fields = {
     "ResidencyLeave",
     "NameLeave",
 }
+
+# VODs (subset of MatchScheduleGame focused on VOD data)
+vods_fields = {
+    "GameId",
+    "MatchId",
+    "Vod",
+    "VodGameStart",
+    "Blue",
+    "Red",
+    "OverviewPage",
+    "Winner",
+    "N_GameInMatch",
+    "MVP",
+    "MatchHistory",
+}
+
+# Patches
+patches_fields = {
+    "Patch",
+    "ReleaseDate",
+    "Highlights",
+    "PatchNotesLink",
+    "DisabledChampions",
+    "DisabledItems",
+    "NewChampions",
+    "UpdatedChampions",
+}

@@ -441,6 +441,200 @@ class TestDataFactory:
         ]
 
     @staticmethod
+    def create_vods_mock_response() -> List[Dict[str, Any]]:
+        """Create mock API response for VODs data."""
+        return [
+            {
+                "GameId": "GAME001",
+                "MatchId": "MATCH001",
+                "Vod": "https://twitch.tv/videos/123456",
+                "VodGameStart": "00:15:30",
+                "Blue": "T1",
+                "Red": "GenG",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+                "Winner": "1",
+                "N_GameInMatch": "1",
+                "MVP": "Faker",
+                "MatchHistory": "https://matchhistory.example.com/game1",
+            },
+            {
+                "GameId": "GAME002",
+                "MatchId": "MATCH001",
+                "Vod": "https://twitch.tv/videos/123457",
+                "VodGameStart": "01:30:45",
+                "Blue": "GenG",
+                "Red": "T1",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+                "Winner": "2",
+                "N_GameInMatch": "2",
+                "MVP": "Zeus",
+                "MatchHistory": "https://matchhistory.example.com/game2",
+            },
+            {
+                "GameId": "GAME003",
+                "MatchId": "MATCH002",
+                "Vod": "",
+                "VodGameStart": "",
+                "Blue": "DRX",
+                "Red": "T1",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+                "Winner": "2",
+                "N_GameInMatch": "1",
+                "MVP": "Faker",
+                "MatchHistory": "",
+            },
+        ]
+
+    @staticmethod
+    def create_patches_mock_response() -> List[Dict[str, Any]]:
+        """Create mock API response for patches data."""
+        return [
+            {
+                "Patch": "14.1",
+                "ReleaseDate": "2024-01-10T00:00:00Z",
+                "Highlights": "Season 14 start, new items",
+                "PatchNotesLink": "https://www.leagueoflegends.com/en-us/news/game-updates/patch-14-1-notes/",
+                "DisabledChampions": "",
+                "DisabledItems": "",
+                "NewChampions": "",
+                "UpdatedChampions": "Ahri, Lux",
+            },
+            {
+                "Patch": "14.2",
+                "ReleaseDate": "2024-01-24T00:00:00Z",
+                "Highlights": "Balance changes",
+                "PatchNotesLink": "https://www.leagueoflegends.com/en-us/news/game-updates/patch-14-2-notes/",
+                "DisabledChampions": "Viego",
+                "DisabledItems": "Heartsteel",
+                "NewChampions": "Smolder",
+                "UpdatedChampions": "K'Sante, Rek'Sai",
+            },
+            {
+                "Patch": "13.24",
+                "ReleaseDate": "2023-12-06T00:00:00Z",
+                "Highlights": "Preseason patch",
+                "PatchNotesLink": "https://www.leagueoflegends.com/en-us/news/game-updates/patch-13-24-notes/",
+                "DisabledChampions": "",
+                "DisabledItems": "",
+                "NewChampions": "",
+                "UpdatedChampions": "",
+            },
+        ]
+
+    @staticmethod
+    def create_champion_stats_pick_mock_response() -> List[Dict[str, Any]]:
+        """Create mock API response for champion pick data (ScoreboardPlayers)."""
+        return [
+            {
+                "Champion": "Jinx",
+                "PlayerWin": "Yes",
+                "Kills": "8",
+                "Deaths": "2",
+                "Assists": "10",
+            },
+            {
+                "Champion": "Jinx",
+                "PlayerWin": "Yes",
+                "Kills": "5",
+                "Deaths": "3",
+                "Assists": "12",
+            },
+            {
+                "Champion": "Jinx",
+                "PlayerWin": "No",
+                "Kills": "3",
+                "Deaths": "5",
+                "Assists": "6",
+            },
+            {
+                "Champion": "Azir",
+                "PlayerWin": "Yes",
+                "Kills": "6",
+                "Deaths": "1",
+                "Assists": "8",
+            },
+            {
+                "Champion": "Azir",
+                "PlayerWin": "No",
+                "Kills": "2",
+                "Deaths": "4",
+                "Assists": "5",
+            },
+        ]
+
+    @staticmethod
+    def create_champion_stats_ban_mock_response() -> List[Dict[str, Any]]:
+        """Create mock API response for champion ban data (PicksAndBansS7)."""
+        return [
+            {
+                "Team1Ban1": "Jinx",
+                "Team1Ban2": "K'Sante",
+                "Team1Ban3": "Azir",
+                "Team1Ban4": "Nautilus",
+                "Team1Ban5": "Maokai",
+                "Team2Ban1": "Viego",
+                "Team2Ban2": "Lee Sin",
+                "Team2Ban3": "Orianna",
+                "Team2Ban4": "Thresh",
+                "Team2Ban5": "Rell",
+            },
+            {
+                "Team1Ban1": "Jinx",
+                "Team1Ban2": "Azir",
+                "Team1Ban3": "Rell",
+                "Team1Ban4": "Nautilus",
+                "Team1Ban5": "Maokai",
+                "Team2Ban1": "K'Sante",
+                "Team2Ban2": "Lee Sin",
+                "Team2Ban3": "Orianna",
+                "Team2Ban4": "Thresh",
+                "Team2Ban5": "Viego",
+            },
+        ]
+
+    @staticmethod
+    def create_player_champion_stats_mock_response() -> List[Dict[str, Any]]:
+        """Create mock API response for player champion stats."""
+        return [
+            {
+                "Link": "Faker",
+                "Champion": "Azir",
+                "PlayerWin": "Yes",
+                "Kills": "8",
+                "Deaths": "1",
+                "Assists": "12",
+                "CS": "285",
+                "Gold": "18500",
+                "DamageToChampions": "32000",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+            },
+            {
+                "Link": "Faker",
+                "Champion": "Azir",
+                "PlayerWin": "Yes",
+                "Kills": "5",
+                "Deaths": "2",
+                "Assists": "10",
+                "CS": "275",
+                "Gold": "17200",
+                "DamageToChampions": "28500",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+            },
+            {
+                "Link": "Faker",
+                "Champion": "Orianna",
+                "PlayerWin": "No",
+                "Kills": "3",
+                "Deaths": "4",
+                "Assists": "8",
+                "CS": "260",
+                "Gold": "15000",
+                "DamageToChampions": "24000",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+            },
+        ]
+
+    @staticmethod
     def create_scoreboard_players_mock_response() -> List[Dict[str, Any]]:
         """Create mock API response for scoreboard players data."""
         return [
@@ -654,6 +848,36 @@ def tournament_results_mock_data(test_data_factory):
 def tenures_mock_data(test_data_factory):
     """Provide tenures mock data."""
     return test_data_factory.create_tenures_mock_response()
+
+
+@pytest.fixture
+def vods_mock_data(test_data_factory):
+    """Provide VODs mock data."""
+    return test_data_factory.create_vods_mock_response()
+
+
+@pytest.fixture
+def patches_mock_data(test_data_factory):
+    """Provide patches mock data."""
+    return test_data_factory.create_patches_mock_response()
+
+
+@pytest.fixture
+def champion_stats_pick_mock_data(test_data_factory):
+    """Provide champion pick stats mock data."""
+    return test_data_factory.create_champion_stats_pick_mock_response()
+
+
+@pytest.fixture
+def champion_stats_ban_mock_data(test_data_factory):
+    """Provide champion ban stats mock data."""
+    return test_data_factory.create_champion_stats_ban_mock_response()
+
+
+@pytest.fixture
+def player_champion_stats_mock_data(test_data_factory):
+    """Provide player champion stats mock data."""
+    return test_data_factory.create_player_champion_stats_mock_response()
 
 
 # Constants for tests

@@ -156,3 +156,37 @@ from meeps.parsers.tenures_parser import (
     get_longest_tenures,
     Tenure,
 )
+
+# VODs - Game VOD Information
+from meeps.parsers.vods_parser import (
+    get_vods,
+    get_vod_by_game_id,
+    get_vods_by_match,
+    get_team_vods,
+    get_tournament_vods,
+    GameVod,
+)
+
+# Patches - Patch Metadata and History
+from meeps.parsers.patches_parser import (
+    get_patches,
+    get_patch_by_version,
+    get_patches_in_date_range,
+    get_latest_patch,
+    get_patches_by_major_version,
+    Patch,
+)
+
+# ChampionStats - Tournament and Player Champion Statistics
+from meeps.parsers.champion_stats_parser import (
+    get_champion_tournament_stats,
+    get_champion_stats_by_name,
+    get_most_picked_champions,
+    get_most_banned_champions,
+    get_highest_winrate_champions,
+    get_player_champion_stats,
+    get_player_champion_pool,
+    get_player_signature_champions,
+    ChampionTournamentStats,
+    PlayerChampionStats,
+)
