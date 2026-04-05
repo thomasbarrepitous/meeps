@@ -286,3 +286,97 @@ scoreboard_players_fields = {
     "GameRoleIdVs",
     "StatsPage",
 }
+
+# MatchSchedule
+match_schedule_fields = {
+    "Team1",
+    "Team2",
+    "DateTime_UTC",
+    "OverviewPage",
+    "BestOf",
+    "Winner",
+    "Team1Score",
+    "Team2Score",
+    "Team1Points",
+    "Team2Points",
+    "Stream",
+    "Round",
+    "ShownName",
+    "IsTiebreaker",
+    "HasTime",
+}
+
+# Teams
+teams_fields = {
+    "Name",
+    "Short",
+    "Region",
+    "Link",
+    "OverviewPage",
+    "Image",
+    "IsDisbanded",
+    "RenamedTo",
+    "Location",
+}
+
+# MatchScheduleGame
+match_schedule_game_fields = {
+    "Blue",
+    "Red",
+    "Winner",
+    "BlueScore",
+    "RedScore",
+    "GameId",
+    "MatchId",
+    "OverviewPage",
+    "N_GameInMatch",
+    "IsChronobreak",
+    "IsRemake",
+    "FF",
+    "FirstPick",
+    "Selection",
+    "MVP",
+    "MVPPoints",
+    "Vod",
+    "VodGameStart",
+    "MatchHistory",
+    "RiotPlatformGameId",
+}
+
+# TournamentResults
+tournament_results_fields = {
+    "Event",
+    "Team",
+    "Place",
+    "Place_Number",
+    "OverviewPage",
+    "Tier",
+    "Date",
+    "Phase",
+    "Prize",
+    "Prize_USD",
+    "PrizeUnit",
+    "Qualified",
+    "IsAchievement",
+    "Showmatch",
+    "LastResult",
+    "LastOpponent_Markup",
+    "LastOutcome",
+}
+
+# Tenures
+tenures_fields = {
+    "Player",
+    "Team",
+    "DateJoin",
+    "DateLeave",
+    "Duration",
+    "IsCurrent",
+    "NextTeam",
+    "NextIsRetired",
+    "ContractEnd",
+    "RosterChangeIdJoin",
+    "RosterChangeIdLeave",
+    "ResidencyLeave",
+    "NameLeave",
+}

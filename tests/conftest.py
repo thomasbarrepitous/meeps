@@ -215,6 +215,232 @@ class TestDataFactory:
         ]
     
     @staticmethod
+    def create_teams_mock_response() -> List[Dict[str, Any]]:
+        """Create mock API response for teams data."""
+        return [
+            {
+                "Name": "T1",
+                "Short": "T1",
+                "Region": "Korea",
+                "Link": "T1",
+                "OverviewPage": "T1",
+                "Image": "T1logo.png",
+                "IsDisbanded": "",
+                "RenamedTo": "",
+                "Location": "Seoul",
+            },
+            {
+                "Name": "Gen.G",
+                "Short": "GEN",
+                "Region": "Korea",
+                "Link": "Gen.G",
+                "OverviewPage": "Gen.G",
+                "Image": "GenGlogo.png",
+                "IsDisbanded": "",
+                "RenamedTo": "",
+                "Location": "Seoul",
+            },
+            {
+                "Name": "Samsung Galaxy",
+                "Short": "SSG",
+                "Region": "Korea",
+                "Link": "Samsung Galaxy",
+                "OverviewPage": "Samsung Galaxy",
+                "Image": "SSGlogo.png",
+                "IsDisbanded": "Yes",
+                "RenamedTo": "Gen.G",
+                "Location": "Seoul",
+            },
+        ]
+
+    @staticmethod
+    def create_match_schedule_mock_response() -> List[Dict[str, Any]]:
+        """Create mock API response for match schedule data."""
+        return [
+            {
+                "Team1": "T1",
+                "Team2": "GenG",
+                "DateTime_UTC": "2024-08-15T10:00:00Z",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+                "BestOf": "3",
+                "Winner": "1",
+                "Team1Score": "2",
+                "Team2Score": "1",
+                "Team1Points": "",
+                "Team2Points": "",
+                "Stream": "https://twitch.tv/lck",
+                "Round": "Week 1",
+                "ShownName": "",
+                "IsTiebreaker": "",
+                "HasTime": "Yes",
+            },
+            {
+                "Team1": "T1",
+                "Team2": "DRX",
+                "DateTime_UTC": "2024-08-20T12:00:00Z",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+                "BestOf": "3",
+                "Winner": "",
+                "Team1Score": "",
+                "Team2Score": "",
+                "Team1Points": "",
+                "Team2Points": "",
+                "Stream": "https://twitch.tv/lck",
+                "Round": "Week 2",
+                "ShownName": "",
+                "IsTiebreaker": "",
+                "HasTime": "Yes",
+            },
+            {
+                "Team1": "GenG",
+                "Team2": "DRX",
+                "DateTime_UTC": "2026-12-25T14:00:00Z",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+                "BestOf": "3",
+                "Winner": "",
+                "Team1Score": "",
+                "Team2Score": "",
+                "Team1Points": "",
+                "Team2Points": "",
+                "Stream": "",
+                "Round": "Week 3",
+                "ShownName": "",
+                "IsTiebreaker": "",
+                "HasTime": "Yes",
+            },
+        ]
+
+    @staticmethod
+    def create_match_schedule_game_mock_response() -> List[Dict[str, Any]]:
+        """Create mock API response for match schedule game data."""
+        return [
+            {
+                "Blue": "T1",
+                "Red": "GenG",
+                "Winner": "1",
+                "BlueScore": "1",
+                "RedScore": "0",
+                "GameId": "GAME001",
+                "MatchId": "MATCH001",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+                "N_GameInMatch": "1",
+                "IsChronobreak": "",
+                "IsRemake": "",
+                "FF": "",
+                "FirstPick": "Blue",
+                "Selection": "",
+                "MVP": "Faker",
+                "MVPPoints": "100",
+                "Vod": "https://twitch.tv/videos/123456",
+                "VodGameStart": "00:15:30",
+                "MatchHistory": "https://matchhistory.example.com/game1",
+                "RiotPlatformGameId": "KR_123456",
+            },
+            {
+                "Blue": "GenG",
+                "Red": "T1",
+                "Winner": "2",
+                "BlueScore": "0",
+                "RedScore": "1",
+                "GameId": "GAME002",
+                "MatchId": "MATCH001",
+                "OverviewPage": "LCK/2024 Season/Summer Season",
+                "N_GameInMatch": "2",
+                "IsChronobreak": "",
+                "IsRemake": "1",
+                "FF": "",
+                "FirstPick": "Red",
+                "Selection": "",
+                "MVP": "Zeus",
+                "MVPPoints": "100",
+                "Vod": "",
+                "VodGameStart": "",
+                "MatchHistory": "https://matchhistory.example.com/game2",
+                "RiotPlatformGameId": "KR_123457",
+            },
+        ]
+
+    @staticmethod
+    def create_tournament_results_mock_response() -> List[Dict[str, Any]]:
+        """Create mock API response for tournament results data."""
+        return [
+            {
+                "Event": "Worlds 2023",
+                "Team": "T1",
+                "Place": "1st",
+                "Place_Number": "1",
+                "OverviewPage": "Worlds/2023",
+                "Tier": "Major",
+                "Date": "2023-11-19T00:00:00Z",
+                "Phase": "Finals",
+                "Prize": "500000",
+                "Prize_USD": "500000.0",
+                "PrizeUnit": "USD",
+                "Qualified": "",
+                "IsAchievement": "",
+                "Showmatch": "",
+                "LastResult": "3-0",
+                "LastOpponent_Markup": "Weibo Gaming",
+                "LastOutcome": "Win",
+            },
+            {
+                "Event": "Worlds 2023",
+                "Team": "Weibo Gaming",
+                "Place": "2nd",
+                "Place_Number": "2",
+                "OverviewPage": "Worlds/2023",
+                "Tier": "Major",
+                "Date": "2023-11-19T00:00:00Z",
+                "Phase": "Finals",
+                "Prize": "200000",
+                "Prize_USD": "200000.0",
+                "PrizeUnit": "USD",
+                "Qualified": "",
+                "IsAchievement": "",
+                "Showmatch": "",
+                "LastResult": "0-3",
+                "LastOpponent_Markup": "T1",
+                "LastOutcome": "Loss",
+            },
+        ]
+
+    @staticmethod
+    def create_tenures_mock_response() -> List[Dict[str, Any]]:
+        """Create mock API response for tenures data."""
+        return [
+            {
+                "Player": "Faker",
+                "Team": "T1",
+                "DateJoin": "2013-02-01T00:00:00Z",
+                "DateLeave": "",
+                "Duration": "4000",
+                "IsCurrent": "1",
+                "NextTeam": "",
+                "NextIsRetired": "",
+                "ContractEnd": "2025-12-31",
+                "RosterChangeIdJoin": "RC001",
+                "RosterChangeIdLeave": "",
+                "ResidencyLeave": "",
+                "NameLeave": "",
+            },
+            {
+                "Player": "Caps",
+                "Team": "G2 Esports",
+                "DateJoin": "2018-11-15T00:00:00Z",
+                "DateLeave": "2023-11-15T00:00:00Z",
+                "Duration": "1826",
+                "IsCurrent": "",
+                "NextTeam": "Free Agent",
+                "NextIsRetired": "",
+                "ContractEnd": "",
+                "RosterChangeIdJoin": "RC002",
+                "RosterChangeIdLeave": "RC003",
+                "ResidencyLeave": "EU",
+                "NameLeave": "Caps",
+            },
+        ]
+
+    @staticmethod
     def create_scoreboard_players_mock_response() -> List[Dict[str, Any]]:
         """Create mock API response for scoreboard players data."""
         return [
@@ -398,6 +624,36 @@ def contracts_mock_data(test_data_factory):
 def scoreboard_players_mock_data(test_data_factory):
     """Provide scoreboard players mock data."""
     return test_data_factory.create_scoreboard_players_mock_response()
+
+
+@pytest.fixture
+def teams_mock_data(test_data_factory):
+    """Provide teams mock data."""
+    return test_data_factory.create_teams_mock_response()
+
+
+@pytest.fixture
+def match_schedule_mock_data(test_data_factory):
+    """Provide match schedule mock data."""
+    return test_data_factory.create_match_schedule_mock_response()
+
+
+@pytest.fixture
+def match_schedule_game_mock_data(test_data_factory):
+    """Provide match schedule game mock data."""
+    return test_data_factory.create_match_schedule_game_mock_response()
+
+
+@pytest.fixture
+def tournament_results_mock_data(test_data_factory):
+    """Provide tournament results mock data."""
+    return test_data_factory.create_tournament_results_mock_response()
+
+
+@pytest.fixture
+def tenures_mock_data(test_data_factory):
+    """Provide tenures mock data."""
+    return test_data_factory.create_tenures_mock_response()
 
 
 # Constants for tests

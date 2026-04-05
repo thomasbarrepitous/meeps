@@ -12,14 +12,19 @@ from meeps.parsers.team_parser import (
     get_long_team_name_from_trigram,
     get_team_thumbnail,
     get_all_team_assets,
+    TeamAssets,
+    TeamPlayer,
 )
 from meeps.parsers.player_parser import (
     get_player_by_name,
+    PlayerInfo,
+    PlayerStatus,
 )
 
 # Tournament roster information
 from meeps.parsers.tournament_roster_parser import (
     get_tournament_rosters,
+    TournamentRoster,
 )
 
 # Standings
@@ -28,6 +33,7 @@ from meeps.parsers.standings_parser import (
     get_tournament_standings,
     get_team_standings,
     get_standings_by_overview_page,
+    Standing,
 )
 
 # Champions and items data
@@ -38,6 +44,7 @@ from meeps.parsers.champions_parser import (
     get_champions_by_resource,
     get_melee_champions,
     get_ranged_champions,
+    Champion,
 )
 from meeps.parsers.items_parser import (
     get_items,
@@ -49,6 +56,7 @@ from meeps.parsers.items_parser import (
     get_health_items,
     get_mana_items,
     search_items_by_stat,
+    Item,
 )
 
 # Enhanced roster tracking
@@ -60,6 +68,8 @@ from meeps.parsers.roster_changes_parser import (
     get_roster_additions,
     get_roster_removals,
     get_retirements,
+    RosterChange,
+    RosterAction,
 )
 
 # Enums for valid values
@@ -78,6 +88,7 @@ from meeps.parsers.contracts_parser import (
     get_active_contracts,
     get_expiring_contracts,
     get_contract_removals,
+    Contract,
 )
 
 # ScoreboardPlayers - Match Performance Statistics
@@ -89,4 +100,59 @@ from meeps.parsers.scoreboard_players_parser import (
     get_game_scoreboard,
     get_tournament_mvp_candidates,
     get_role_performance_comparison,
+    ScoreboardPlayer,
+)
+
+# Teams - Team Metadata
+from meeps.parsers.teams_parser import (
+    get_teams,
+    get_team_by_name,
+    get_team_by_short,
+    get_teams_by_region,
+    get_active_teams,
+    get_disbanded_teams,
+    search_teams,
+    Team,
+)
+
+# MatchSchedule - Match Schedules and Results
+from meeps.parsers.match_schedule_parser import (
+    get_match_schedule,
+    get_upcoming_matches,
+    get_recent_results,
+    get_team_schedule,
+    get_tournament_schedule,
+    get_today_matches,
+    get_head_to_head,
+    MatchSchedule,
+)
+
+# MatchScheduleGame - Individual Game Data
+from meeps.parsers.match_schedule_game_parser import (
+    get_match_schedule_games,
+    get_games_by_match,
+    get_games_by_tournament,
+    get_mvp_games,
+    get_remakes,
+    MatchScheduleGame,
+)
+
+# TournamentResults - Tournament Placements and Prizes
+from meeps.parsers.tournament_results_parser import (
+    get_tournament_results,
+    get_team_tournament_history,
+    get_tournament_placements,
+    get_tournament_winners,
+    get_prize_earnings,
+    TournamentResult,
+)
+
+# Tenures - Player Team History
+from meeps.parsers.tenures_parser import (
+    get_tenures,
+    get_player_tenures,
+    get_team_tenures,
+    get_current_roster_tenures,
+    get_longest_tenures,
+    Tenure,
 )

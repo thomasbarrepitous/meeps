@@ -30,21 +30,17 @@ The codebase uses two distinct patterns for data models:
 
 ### Test Coverage
 
-Current coverage: ~81%. Priority modules needing tests:
+Current coverage: 89%. Remaining modules needing tests:
 
 | Module | Coverage | Priority |
 |--------|----------|----------|
-| `team_parser.py` | 25% | High |
-| `game_parser.py` | 34% | High |
 | `leaguepedia.py` | 42% | Medium |
-| `tournament_roster_parser.py` | 48% | Medium |
 | `transmuters/*` | ~47% | Low |
 
 ### Documentation
 - [ ] Document which model pattern to use for new code (internal dataclasses vs lol_dto)
 
 ### Test Files to Add
-- [ ] Add `test_tournament_roster_parser.py`
 - [ ] Add `tests/transmuters/` test directory
 - [ ] Add `test_transmuters_game.py`
 - [ ] Add `test_transmuters_picks_bans.py`
@@ -72,6 +68,14 @@ All parsers now use `QueryBuilder` for safe query construction:
 ### Test Coverage Added
 - `test_player_parser.py` - 40 tests
 - `test_query_builder.py` - 36 tests
+- `test_tournament_roster_parser.py` - 26 tests
+- `test_game_unit.py` - 28 tests
+- `test_team_unit.py` - 30 tests
+
+### Type Exports Added
+All dataclasses and enums are now exportable from the main module for type hints:
+- Enums: `PlayerStatus`, `RosterAction`, `ItemTier`, `ChampionResource`, `ChampionAttribute`, `Role`
+- Dataclasses: `Standing`, `Champion`, `Item`, `RosterChange`, `Contract`, `TournamentRoster`, `ScoreboardPlayer`, `PlayerInfo`, `TeamAssets`, `TeamPlayer`
 
 ---
 
@@ -190,8 +194,11 @@ meeps/
     ├── test_items.py             # Items functionality tests
     ├── test_roster_changes.py    # Roster changes functionality tests
     ├── test_integration_extensions.py # Cross-module integration tests
-    ├── test_game.py              # Game parser tests
-    └── test_team.py              # Team parser tests
+    ├── test_game.py              # Game parser API tests
+    ├── test_game_unit.py         # Game parser unit tests
+    ├── test_team.py              # Team parser API tests
+    ├── test_team_unit.py         # Team parser unit tests
+    └── test_tournament_roster_parser.py # Tournament roster tests
 ```
 
 ---
@@ -388,8 +395,8 @@ poetry run python -m pytest tests/ --cov=meeps -m "not api"
 ```
 
 **Performance expectations:**
-- Fast tests: ~282 tests, <1 second
-- API tests: ~11 tests, 2-5 minutes
+- Fast tests: ~366 tests, <1 second
+- API tests: ~21 tests, 2-5 minutes
 
 ---
 
@@ -403,7 +410,7 @@ poetry run python -m pytest tests/ --cov=meeps -m "not api"
 | **README.md** | ✅ Ready | Comprehensive documentation with examples |
 | **LICENSE** | ⚠️ Review | Copyright says "2020 Tolki" - consider updating |
 | **CHANGELOG.md** | ✅ Ready | Documents v0.1.0, v0.1.1, v0.2.0 |
-| **Test Coverage** | ⚠️ 81% | Some modules need more coverage |
+| **Test Coverage** | ✅ 89% | Major modules covered |
 | **Type Hints** | ✅ Ready | `py.typed` marker present |
 | **Version Export** | ✅ Ready | `__version__ = "0.2.0"` in `__init__.py` |
 
@@ -445,15 +452,12 @@ poetry run python -m pytest tests/ --cov=meeps -m "not api"
   Copyright (c) 2024-2026 Thomas Barrepitous
   ```
 
-- [ ] **Improve test coverage** (currently 81%)
-  Low coverage modules:
+- [x] **Improve test coverage** - Now 89%
+  Remaining low coverage modules:
   | Module | Coverage | Priority |
   |--------|----------|----------|
-  | `team_parser.py` | 25% | High |
-  | `game_parser.py` | 34% | High |
   | `leaguepedia.py` | 42% | Medium |
-  | `transmuters/game.py` | 47% | Low |
-  | `tournament_roster_parser.py` | 48% | Medium |
+  | `transmuters/*` | ~47% | Low |
 
 - [ ] **Run full test suite including API tests**
   ```bash
