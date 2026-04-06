@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import Mock
 from typing import List
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.items_parser import Item
 from meeps.enums import ItemTier
 
@@ -30,7 +30,7 @@ class TestItemsImports:
         ]
         
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
 
 class TestItemDataclass:
@@ -172,7 +172,7 @@ class TestItemsAPI:
         """Test basic get_items call returns properly parsed Item objects."""
         mock_leaguepedia_query.return_value = items_mock_data
         
-        items = lp.get_items()
+        items = mp.get_items()
         
         assert len(items) == 3
         assert all(isinstance(item, Item) for item in items)
@@ -186,7 +186,7 @@ class TestItemsAPI:
         """Test get_items with tier filter using string."""
         mock_leaguepedia_query.return_value = items_mock_data
 
-        items = lp.get_items(tier="Legendary")
+        items = mp.get_items(tier="Legendary")
 
         assert len(items) == 3
         assert all(item.tier == "Legendary" for item in items)
@@ -200,7 +200,7 @@ class TestItemsAPI:
         """Test get_items with tier filter using ItemTier enum."""
         mock_leaguepedia_query.return_value = items_mock_data
 
-        items = lp.get_items(tier=ItemTier.LEGENDARY)
+        items = mp.get_items(tier=ItemTier.LEGENDARY)
 
         assert len(items) == 3
         assert all(item.tier == "Legendary" for item in items)
@@ -216,7 +216,7 @@ class TestItemsAPI:
         single_item_data = [items_mock_data[0]]
         mock_leaguepedia_query.return_value = single_item_data
         
-        item = lp.get_item_by_name(TestConstants.ITEM_INFINITY_EDGE)
+        item = mp.get_item_by_name(TestConstants.ITEM_INFINITY_EDGE)
         
         assert isinstance(item, Item)
         assert item.name == TestConstants.ITEM_INFINITY_EDGE
@@ -230,7 +230,7 @@ class TestItemsAPI:
         """Test get_item_by_name returns None when item not found."""
         mock_leaguepedia_query.return_value = []
         
-        item = lp.get_item_by_name("NonexistentItem")
+        item = mp.get_item_by_name("NonexistentItem")
         
         assert item is None
     
@@ -239,7 +239,7 @@ class TestItemsAPI:
         """Test get_items_by_tier convenience function with string."""
         mock_leaguepedia_query.return_value = items_mock_data
 
-        items = lp.get_items_by_tier("Legendary")
+        items = mp.get_items_by_tier("Legendary")
 
         assert len(items) == 3
         assert all(item.tier == "Legendary" for item in items)
@@ -250,7 +250,7 @@ class TestItemsAPI:
         """Test get_items_by_tier convenience function with ItemTier enum."""
         mock_leaguepedia_query.return_value = items_mock_data
 
-        items = lp.get_items_by_tier(ItemTier.LEGENDARY)
+        items = mp.get_items_by_tier(ItemTier.LEGENDARY)
 
         assert len(items) == 3
         assert all(item.tier == "Legendary" for item in items)
@@ -261,7 +261,7 @@ class TestItemsAPI:
         """Test get_ad_items filters correctly."""
         mock_leaguepedia_query.return_value = items_mock_data
         
-        ad_items = lp.get_ad_items()
+        ad_items = mp.get_ad_items()
         
         # Should only return Infinity Edge (has AD)
         assert len(ad_items) == 1
@@ -273,7 +273,7 @@ class TestItemsAPI:
         """Test get_ap_items filters correctly."""
         mock_leaguepedia_query.return_value = items_mock_data
         
-        ap_items = lp.get_ap_items()
+        ap_items = mp.get_ap_items()
         
         # Should only return Rabadon's Deathcap (has AP)
         assert len(ap_items) == 1
@@ -285,7 +285,7 @@ class TestItemsAPI:
         """Test get_tank_items filters correctly."""
         mock_leaguepedia_query.return_value = items_mock_data
         
-        tank_items = lp.get_tank_items()
+        tank_items = mp.get_tank_items()
         
         # Should only return Thornmail (has armor)
         assert len(tank_items) == 1
@@ -297,7 +297,7 @@ class TestItemsAPI:
         """Test get_health_items filters correctly."""
         mock_leaguepedia_query.return_value = items_mock_data
         
-        health_items = lp.get_health_items()
+        health_items = mp.get_health_items()
         
         # Should only return Thornmail (has health)
         assert len(health_items) == 1
@@ -319,7 +319,7 @@ class TestItemsAPI:
         }]
         mock_leaguepedia_query.return_value = mana_item_data
         
-        mana_items = lp.get_mana_items()
+        mana_items = mp.get_mana_items()
         
         assert len(mana_items) == 1
         assert mana_items[0].provides_mana is True
@@ -333,7 +333,7 @@ class TestItemsSearchByStats:
         """Test searching items by single stat requirement."""
         mock_leaguepedia_query.return_value = items_mock_data
         
-        ad_items = lp.search_items_by_stat(provides_ad=True)
+        ad_items = mp.search_items_by_stat(provides_ad=True)
         
         assert len(ad_items) == 1
         assert ad_items[0].provides_ad is True
@@ -345,7 +345,7 @@ class TestItemsSearchByStats:
         mock_leaguepedia_query.return_value = items_mock_data
         
         # Look for items that provide both armor and health
-        tank_items = lp.search_items_by_stat(provides_armor=True, provides_health=True)
+        tank_items = mp.search_items_by_stat(provides_armor=True, provides_health=True)
         
         assert len(tank_items) == 1
         assert tank_items[0].name == TestConstants.ITEM_THORNMAIL
@@ -358,7 +358,7 @@ class TestItemsSearchByStats:
         mock_leaguepedia_query.return_value = items_mock_data
         
         # Look for items that don't provide AD
-        non_ad_items = lp.search_items_by_stat(provides_ad=False)
+        non_ad_items = mp.search_items_by_stat(provides_ad=False)
         
         assert len(non_ad_items) == 2
         item_names = [item.name for item in non_ad_items]
@@ -372,7 +372,7 @@ class TestItemsSearchByStats:
         mock_leaguepedia_query.return_value = items_mock_data
         
         # Look for items that provide both AD and AP (none in our test data)
-        hybrid_items = lp.search_items_by_stat(provides_ad=True, provides_ap=True)
+        hybrid_items = mp.search_items_by_stat(provides_ad=True, provides_ap=True)
         
         assert len(hybrid_items) == 0
 
@@ -386,7 +386,7 @@ class TestItemsErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
         
         with pytest.raises(RuntimeError, match="Failed to fetch items"):
-            lp.get_items()
+            mp.get_items()
     
     @pytest.mark.integration
     def test_get_item_by_name_api_error(self, mock_leaguepedia_query):
@@ -394,14 +394,14 @@ class TestItemsErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
         
         with pytest.raises(RuntimeError, match=f"Failed to fetch item {TestConstants.ITEM_INFINITY_EDGE}"):
-            lp.get_item_by_name(TestConstants.ITEM_INFINITY_EDGE)
+            mp.get_item_by_name(TestConstants.ITEM_INFINITY_EDGE)
     
     @pytest.mark.integration
     def test_get_items_empty_response(self, mock_leaguepedia_query):
         """Test handling of empty API response."""
         mock_leaguepedia_query.return_value = []
         
-        items = lp.get_items()
+        items = mp.get_items()
         
         assert items == []
         assert isinstance(items, list)
@@ -466,7 +466,7 @@ class TestItemsEdgeCases:
         malicious_input = "'; DROP TABLE Items; --"
         
         # Should not raise an exception and should escape the input
-        items = lp.get_items(tier=malicious_input)
+        items = mp.get_items(tier=malicious_input)
         
         # Verify the input was escaped (single quotes doubled)
         call_kwargs = mock_leaguepedia_query.call_args[1]

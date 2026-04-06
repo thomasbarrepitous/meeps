@@ -3,7 +3,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.champion_stats_parser import (
     ChampionTournamentStats,
     PlayerChampionStats,
@@ -30,13 +30,13 @@ class TestChampionStatsImports:
         ]
 
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
     @pytest.mark.unit
     def test_dataclasses_importable(self):
         """Test that dataclasses are importable."""
-        assert hasattr(lp, "ChampionTournamentStats")
-        assert hasattr(lp, "PlayerChampionStats")
+        assert hasattr(mp, "ChampionTournamentStats")
+        assert hasattr(mp, "PlayerChampionStats")
 
 
 class TestChampionTournamentStatsDataclass:
@@ -273,7 +273,7 @@ class TestChampionTournamentStatsAPI:
             champion_stats_ban_mock_data,  # Ban data
         ]
 
-        stats = lp.get_champion_tournament_stats(tournament=TestConstants.LCK_2024_SUMMER)
+        stats = mp.get_champion_tournament_stats(tournament=TestConstants.LCK_2024_SUMMER)
 
         assert len(stats) > 0
         assert all(isinstance(s, ChampionTournamentStats) for s in stats)
@@ -293,7 +293,7 @@ class TestChampionTournamentStatsAPI:
             champion_stats_ban_mock_data,
         ]
 
-        stats = lp.get_champion_tournament_stats(
+        stats = mp.get_champion_tournament_stats(
             tournament=TestConstants.LCK_2024_SUMMER,
             champion="Jinx",
         )
@@ -316,7 +316,7 @@ class TestChampionTournamentStatsAPI:
             champion_stats_ban_mock_data,
         ]
 
-        stats = lp.get_champion_tournament_stats(
+        stats = mp.get_champion_tournament_stats(
             tournament=TestConstants.LCK_2024_SUMMER,
             min_games=3,
         )
@@ -340,7 +340,7 @@ class TestChampionTournamentStatsAPI:
             champion_stats_ban_mock_data,
         ]
 
-        stats = lp.get_champion_stats_by_name(
+        stats = mp.get_champion_stats_by_name(
             champion="Jinx",
             tournament=TestConstants.LCK_2024_SUMMER,
         )
@@ -361,7 +361,7 @@ class TestChampionTournamentStatsAPI:
             [],  # No bans
         ]
 
-        stats = lp.get_champion_stats_by_name(
+        stats = mp.get_champion_stats_by_name(
             champion="NonexistentChampion",
             tournament=TestConstants.LCK_2024_SUMMER,
         )
@@ -382,7 +382,7 @@ class TestChampionTournamentStatsAPI:
             champion_stats_ban_mock_data,
         ]
 
-        stats = lp.get_most_picked_champions(
+        stats = mp.get_most_picked_champions(
             tournament=TestConstants.LCK_2024_SUMMER,
             limit=5,
         )
@@ -406,7 +406,7 @@ class TestChampionTournamentStatsAPI:
             champion_stats_ban_mock_data,
         ]
 
-        stats = lp.get_most_banned_champions(
+        stats = mp.get_most_banned_champions(
             tournament=TestConstants.LCK_2024_SUMMER,
             limit=5,
         )
@@ -430,7 +430,7 @@ class TestChampionTournamentStatsAPI:
             champion_stats_ban_mock_data,
         ]
 
-        stats = lp.get_highest_winrate_champions(
+        stats = mp.get_highest_winrate_champions(
             tournament=TestConstants.LCK_2024_SUMMER,
             min_games=1,
             limit=5,
@@ -456,7 +456,7 @@ class TestPlayerChampionStatsAPI:
         """Test get_player_champion_stats returns player's champion data."""
         mock_leaguepedia_query.return_value = player_champion_stats_mock_data
 
-        stats = lp.get_player_champion_stats(player="Faker")
+        stats = mp.get_player_champion_stats(player="Faker")
 
         assert len(stats) > 0
         assert all(isinstance(s, PlayerChampionStats) for s in stats)
@@ -472,7 +472,7 @@ class TestPlayerChampionStatsAPI:
         """Test get_player_champion_stats with tournament filter."""
         mock_leaguepedia_query.return_value = player_champion_stats_mock_data
 
-        stats = lp.get_player_champion_stats(
+        stats = mp.get_player_champion_stats(
             player="Faker",
             tournament=TestConstants.LCK_2024_SUMMER,
         )
@@ -491,7 +491,7 @@ class TestPlayerChampionStatsAPI:
         azir_data = [d for d in player_champion_stats_mock_data if d["Champion"] == "Azir"]
         mock_leaguepedia_query.return_value = azir_data
 
-        stats = lp.get_player_champion_stats(
+        stats = mp.get_player_champion_stats(
             player="Faker",
             champion="Azir",
         )
@@ -507,7 +507,7 @@ class TestPlayerChampionStatsAPI:
         """Test get_player_champion_pool returns all champions played."""
         mock_leaguepedia_query.return_value = player_champion_stats_mock_data
 
-        stats = lp.get_player_champion_pool(player="Faker")
+        stats = mp.get_player_champion_pool(player="Faker")
 
         assert len(stats) > 0
         # Should be sorted by games_played descending
@@ -523,7 +523,7 @@ class TestPlayerChampionStatsAPI:
         """Test get_player_champion_pool with minimum games filter."""
         mock_leaguepedia_query.return_value = player_champion_stats_mock_data
 
-        stats = lp.get_player_champion_pool(
+        stats = mp.get_player_champion_pool(
             player="Faker",
             min_games=2,
         )
@@ -541,7 +541,7 @@ class TestPlayerChampionStatsAPI:
         """Test get_player_signature_champions returns high winrate champions."""
         mock_leaguepedia_query.return_value = player_champion_stats_mock_data
 
-        stats = lp.get_player_signature_champions(
+        stats = mp.get_player_signature_champions(
             player="Faker",
             min_games=1,
             min_winrate=50.0,
@@ -562,7 +562,7 @@ class TestChampionStatsErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
 
         with pytest.raises(RuntimeError, match="Failed to fetch champion tournament stats"):
-            lp.get_champion_tournament_stats(tournament=TestConstants.LCK_2024_SUMMER)
+            mp.get_champion_tournament_stats(tournament=TestConstants.LCK_2024_SUMMER)
 
     @pytest.mark.integration
     def test_get_player_champion_stats_api_error(self, mock_leaguepedia_query):
@@ -570,7 +570,7 @@ class TestChampionStatsErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
 
         with pytest.raises(RuntimeError, match="Failed to fetch player champion stats"):
-            lp.get_player_champion_stats(player="Faker")
+            mp.get_player_champion_stats(player="Faker")
 
 
 class TestChampionStatsEdgeCases:
@@ -643,7 +643,7 @@ class TestChampionStatsEdgeCases:
         ]
 
         # Should not raise, just skip malformed data
-        stats = lp.get_champion_tournament_stats(tournament=TestConstants.LCK_2024_SUMMER)
+        stats = mp.get_champion_tournament_stats(tournament=TestConstants.LCK_2024_SUMMER)
 
         # Should have stats for Jinx with 0 KDA values
         jinx_stats = [s for s in stats if s.champion == "Jinx"]
@@ -668,7 +668,7 @@ class TestChampionStatsDataAggregation:
             champion_stats_ban_mock_data,
         ]
 
-        stats = lp.get_champion_tournament_stats(tournament=TestConstants.LCK_2024_SUMMER)
+        stats = mp.get_champion_tournament_stats(tournament=TestConstants.LCK_2024_SUMMER)
 
         # Find Jinx stats (3 games in mock data)
         jinx_stats = next((s for s in stats if s.champion == "Jinx"), None)
@@ -693,7 +693,7 @@ class TestChampionStatsDataAggregation:
         """Test that player stats are correctly aggregated by champion."""
         mock_leaguepedia_query.return_value = player_champion_stats_mock_data
 
-        stats = lp.get_player_champion_stats(player="Faker")
+        stats = mp.get_player_champion_stats(player="Faker")
 
         # Find Azir stats (2 games in mock data)
         azir_stats = next((s for s in stats if s.champion == "Azir"), None)

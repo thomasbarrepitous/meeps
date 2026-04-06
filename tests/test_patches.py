@@ -4,7 +4,7 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import patch
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.patches_parser import Patch
 
 from .conftest import TestConstants, assert_valid_dataclass_instance
@@ -25,12 +25,12 @@ class TestPatchesImports:
         ]
 
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
     @pytest.mark.unit
     def test_patch_dataclass_importable(self):
         """Test that Patch dataclass is importable."""
-        assert hasattr(lp, "Patch")
+        assert hasattr(mp, "Patch")
 
 
 class TestPatchDataclass:
@@ -166,7 +166,7 @@ class TestPatchesAPI:
         """Test basic get_patches call returns properly parsed Patch objects."""
         mock_leaguepedia_query.return_value = patches_mock_data
 
-        patches = lp.get_patches()
+        patches = mp.get_patches()
 
         assert len(patches) == 3
         assert all(isinstance(p, Patch) for p in patches)
@@ -178,7 +178,7 @@ class TestPatchesAPI:
         """Test get_patches with year filter."""
         mock_leaguepedia_query.return_value = patches_mock_data[:2]  # Only 2024 patches
 
-        patches = lp.get_patches(year=2024)
+        patches = mp.get_patches(year=2024)
 
         mock_leaguepedia_query.assert_called_once()
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -189,7 +189,7 @@ class TestPatchesAPI:
         """Test get_patches default ordering is by date descending."""
         mock_leaguepedia_query.return_value = patches_mock_data
 
-        lp.get_patches()
+        mp.get_patches()
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert call_kwargs["order_by"] == "Patches.ReleaseDate DESC"
@@ -199,7 +199,7 @@ class TestPatchesAPI:
         """Test get_patches with limit parameter."""
         mock_leaguepedia_query.return_value = [patches_mock_data[0]]
 
-        patches = lp.get_patches(limit=1)
+        patches = mp.get_patches(limit=1)
 
         assert len(patches) == 1
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -210,7 +210,7 @@ class TestPatchesAPI:
         """Test get_patch_by_version returns single patch."""
         mock_leaguepedia_query.return_value = [patches_mock_data[0]]
 
-        patch = lp.get_patch_by_version("14.1")
+        patch = mp.get_patch_by_version("14.1")
 
         assert isinstance(patch, Patch)
         assert patch.patch == "14.1"
@@ -221,7 +221,7 @@ class TestPatchesAPI:
         """Test get_patch_by_version returns None when not found."""
         mock_leaguepedia_query.return_value = []
 
-        patch = lp.get_patch_by_version("99.99")
+        patch = mp.get_patch_by_version("99.99")
 
         assert patch is None
 
@@ -233,7 +233,7 @@ class TestPatchesAPI:
         start = datetime(2024, 1, 1, tzinfo=timezone.utc)
         end = datetime(2024, 12, 31, tzinfo=timezone.utc)
 
-        patches = lp.get_patches_in_date_range(start, end)
+        patches = mp.get_patches_in_date_range(start, end)
 
         mock_leaguepedia_query.assert_called_once()
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -246,7 +246,7 @@ class TestPatchesAPI:
         """Test get_latest_patch returns most recent patch."""
         mock_leaguepedia_query.return_value = [patches_mock_data[0]]
 
-        patch = lp.get_latest_patch()
+        patch = mp.get_latest_patch()
 
         assert isinstance(patch, Patch)
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -258,7 +258,7 @@ class TestPatchesAPI:
         """Test get_latest_patch returns None when no patches."""
         mock_leaguepedia_query.return_value = []
 
-        patch = lp.get_latest_patch()
+        patch = mp.get_latest_patch()
 
         assert patch is None
 
@@ -268,7 +268,7 @@ class TestPatchesAPI:
         # Only season 14 patches
         mock_leaguepedia_query.return_value = patches_mock_data[:2]
 
-        patches = lp.get_patches_by_major_version(14)
+        patches = mp.get_patches_by_major_version(14)
 
         mock_leaguepedia_query.assert_called_once()
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -284,7 +284,7 @@ class TestPatchesErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
 
         with pytest.raises(RuntimeError, match="Failed to fetch patches"):
-            lp.get_patches()
+            mp.get_patches()
 
     @pytest.mark.integration
     def test_get_patch_by_version_api_error(self, mock_leaguepedia_query):
@@ -292,7 +292,7 @@ class TestPatchesErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
 
         with pytest.raises(RuntimeError, match="Failed to fetch patch 14.1"):
-            lp.get_patch_by_version("14.1")
+            mp.get_patch_by_version("14.1")
 
     @pytest.mark.integration
     def test_get_latest_patch_api_error(self, mock_leaguepedia_query):
@@ -300,7 +300,7 @@ class TestPatchesErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
 
         with pytest.raises(RuntimeError, match="Failed to fetch latest patch"):
-            lp.get_latest_patch()
+            mp.get_latest_patch()
 
     @pytest.mark.integration
     def test_get_patches_in_date_range_api_error(self, mock_leaguepedia_query):
@@ -311,14 +311,14 @@ class TestPatchesErrorHandling:
         end = datetime(2024, 12, 31)
 
         with pytest.raises(RuntimeError, match="Failed to fetch patches in date range"):
-            lp.get_patches_in_date_range(start, end)
+            mp.get_patches_in_date_range(start, end)
 
     @pytest.mark.integration
     def test_get_patches_empty_response(self, mock_leaguepedia_query):
         """Test handling of empty API response."""
         mock_leaguepedia_query.return_value = []
 
-        patches = lp.get_patches()
+        patches = mp.get_patches()
 
         assert patches == []
         assert isinstance(patches, list)
@@ -369,7 +369,7 @@ class TestPatchesEdgeCases:
         malicious_input = "'; DROP TABLE Patches; --"
 
         # Should not raise an exception and should escape the input
-        lp.get_patch_by_version(malicious_input)
+        mp.get_patch_by_version(malicious_input)
 
         # Verify the input was escaped
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -384,7 +384,7 @@ class TestPatchesDataParsing:
         """Test that release dates are properly parsed."""
         mock_leaguepedia_query.return_value = [patches_mock_data[0]]
 
-        patches = lp.get_patches()
+        patches = mp.get_patches()
 
         assert patches[0].release_date is not None
         assert isinstance(patches[0].release_date, datetime)
@@ -405,7 +405,7 @@ class TestPatchesDataParsing:
         }]
         mock_leaguepedia_query.return_value = mock_data
 
-        patches = lp.get_patches()
+        patches = mp.get_patches()
 
         assert patches[0].highlights is None
         assert patches[0].patch_notes_link is None
@@ -426,7 +426,7 @@ class TestPatchesDataParsing:
         }]
         mock_leaguepedia_query.return_value = mock_data
 
-        patches = lp.get_patches()
+        patches = mp.get_patches()
 
         assert patches[0].release_date is None
 

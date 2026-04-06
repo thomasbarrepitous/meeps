@@ -9,7 +9,7 @@ import pytest
 from unittest.mock import Mock, patch, MagicMock
 from typing import List, Dict, Any
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.game_parser import (
     get_regions,
     get_tournaments,
@@ -95,7 +95,7 @@ class TestGameParserImports:
         ]
 
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
 
 class TestGetRegions:
@@ -106,7 +106,7 @@ class TestGetRegions:
         """Test basic get_regions call."""
         mock_leaguepedia_query.return_value = regions_mock_data
 
-        regions = lp.get_regions()
+        regions = mp.get_regions()
 
         assert isinstance(regions, list)
         assert len(regions) == 4
@@ -119,7 +119,7 @@ class TestGetRegions:
         """Test that get_regions returns list of strings."""
         mock_leaguepedia_query.return_value = regions_mock_data
 
-        regions = lp.get_regions()
+        regions = mp.get_regions()
 
         assert all(isinstance(r, str) for r in regions)
 
@@ -128,7 +128,7 @@ class TestGetRegions:
         """Test get_regions with empty response."""
         mock_leaguepedia_query.return_value = []
 
-        regions = lp.get_regions()
+        regions = mp.get_regions()
 
         assert regions == []
 
@@ -137,7 +137,7 @@ class TestGetRegions:
         """Test that get_regions queries the correct table."""
         mock_leaguepedia_query.return_value = regions_mock_data
 
-        lp.get_regions()
+        mp.get_regions()
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert call_kwargs['tables'] == 'Tournaments'
@@ -152,7 +152,7 @@ class TestGetTournaments:
         """Test basic get_tournaments call."""
         mock_leaguepedia_query.return_value = tournaments_mock_data
 
-        tournaments = lp.get_tournaments(region='Korea', year=2024)
+        tournaments = mp.get_tournaments(region='Korea', year=2024)
 
         assert isinstance(tournaments, list)
         assert len(tournaments) == 2
@@ -163,7 +163,7 @@ class TestGetTournaments:
         """Test get_tournaments with region filter."""
         mock_leaguepedia_query.return_value = tournaments_mock_data
 
-        lp.get_tournaments(region='Korea')
+        mp.get_tournaments(region='Korea')
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert 'Korea' in call_kwargs['where']
@@ -173,7 +173,7 @@ class TestGetTournaments:
         """Test get_tournaments with year filter."""
         mock_leaguepedia_query.return_value = tournaments_mock_data
 
-        lp.get_tournaments(year=2024)
+        mp.get_tournaments(year=2024)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert '2024' in call_kwargs['where']
@@ -183,7 +183,7 @@ class TestGetTournaments:
         """Test get_tournaments default tournament level."""
         mock_leaguepedia_query.return_value = tournaments_mock_data
 
-        lp.get_tournaments(region='Korea')
+        mp.get_tournaments(region='Korea')
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert 'Primary' in call_kwargs['where']
@@ -193,7 +193,7 @@ class TestGetTournaments:
         """Test get_tournaments with is_playoffs=True."""
         mock_leaguepedia_query.return_value = [tournaments_mock_data[1]]
 
-        lp.get_tournaments(region='Korea', is_playoffs=True)
+        mp.get_tournaments(region='Korea', is_playoffs=True)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         # is_playoffs is cast to integer 1
@@ -204,7 +204,7 @@ class TestGetTournaments:
         """Test get_tournaments with is_playoffs=False."""
         mock_leaguepedia_query.return_value = [tournaments_mock_data[0]]
 
-        lp.get_tournaments(region='Korea', is_playoffs=False)
+        mp.get_tournaments(region='Korea', is_playoffs=False)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert 'IsPlayoffs' in call_kwargs['where']
@@ -214,7 +214,7 @@ class TestGetTournaments:
         """Test get_tournaments with order_by parameter."""
         mock_leaguepedia_query.return_value = tournaments_mock_data
 
-        lp.get_tournaments(region='Korea', order_by='Tournaments.DateStart DESC')
+        mp.get_tournaments(region='Korea', order_by='Tournaments.DateStart DESC')
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert call_kwargs.get('order_by') == 'Tournaments.DateStart DESC'
@@ -224,7 +224,7 @@ class TestGetTournaments:
         """Test get_tournaments with limit parameter."""
         mock_leaguepedia_query.return_value = [tournaments_mock_data[0]]
 
-        lp.get_tournaments(region='Korea', limit=1)
+        mp.get_tournaments(region='Korea', limit=1)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert call_kwargs.get('limit') == 1
@@ -234,7 +234,7 @@ class TestGetTournaments:
         """Test get_tournaments with empty response."""
         mock_leaguepedia_query.return_value = []
 
-        tournaments = lp.get_tournaments(region='NonexistentRegion')
+        tournaments = mp.get_tournaments(region='NonexistentRegion')
 
         assert tournaments == []
 
@@ -243,7 +243,7 @@ class TestGetTournaments:
         """Test that tournament data is properly transmuted."""
         mock_leaguepedia_query.return_value = tournaments_mock_data
 
-        tournaments = lp.get_tournaments(region='Korea')
+        tournaments = mp.get_tournaments(region='Korea')
 
         tournament = tournaments[0]
         assert tournament.name == 'LCK 2024 Summer'
@@ -266,7 +266,7 @@ class TestGetGames:
         """Test get_games with empty response."""
         mock_leaguepedia_query.return_value = []
 
-        games = lp.get_games('Nonexistent/Tournament')
+        games = mp.get_games('Nonexistent/Tournament')
 
         assert games == []
 
@@ -275,7 +275,7 @@ class TestGetGames:
         """Test that get_games queries ScoreboardGames table."""
         mock_leaguepedia_query.return_value = []
 
-        lp.get_games('LCK/2024 Season/Summer Season')
+        mp.get_games('LCK/2024 Season/Summer Season')
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert call_kwargs['tables'] == 'ScoreboardGames'
@@ -285,7 +285,7 @@ class TestGetGames:
         """Test get_games constructs correct WHERE clause."""
         mock_leaguepedia_query.return_value = []
 
-        lp.get_games(tournament_overview_page='LCK/2024 Season/Summer Season')
+        mp.get_games(tournament_overview_page='LCK/2024 Season/Summer Season')
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert 'LCK/2024 Season/Summer Season' in call_kwargs['where']
@@ -295,7 +295,7 @@ class TestGetGames:
         """Test get_games passes limit parameter."""
         mock_leaguepedia_query.return_value = []
 
-        lp.get_games('LCK/2024 Season/Summer Season', limit=5)
+        mp.get_games('LCK/2024 Season/Summer Season', limit=5)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert call_kwargs.get('limit') == 5
@@ -305,7 +305,7 @@ class TestGetGames:
         """Test get_games with no tournament filter."""
         mock_leaguepedia_query.return_value = []
 
-        lp.get_games()
+        mp.get_games()
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         # Should have no where clause or empty where clause
@@ -344,7 +344,7 @@ class TestGameParserSQLInjection:
         mock_leaguepedia_query.return_value = tournaments_mock_data
 
         malicious_input = "'; DROP TABLE Tournaments; --"
-        lp.get_tournaments(region=malicious_input)
+        mp.get_tournaments(region=malicious_input)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert "''" in call_kwargs['where']
@@ -355,7 +355,7 @@ class TestGameParserSQLInjection:
         mock_leaguepedia_query.return_value = []
 
         malicious_input = "'; DELETE FROM ScoreboardGames; --"
-        lp.get_games(tournament_overview_page=malicious_input)
+        mp.get_games(tournament_overview_page=malicious_input)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert "''" in call_kwargs['where']
@@ -424,7 +424,7 @@ class TestGameParserEdgeCases:
         """Test get_tournaments with minimal filters."""
         mock_leaguepedia_query.return_value = tournaments_mock_data
 
-        tournaments = lp.get_tournaments()
+        tournaments = mp.get_tournaments()
 
         assert len(tournaments) == 2
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -436,7 +436,7 @@ class TestGameParserEdgeCases:
         """Test get_tournaments with special characters in region."""
         mock_leaguepedia_query.return_value = tournaments_mock_data
 
-        lp.get_tournaments(region="North America")
+        mp.get_tournaments(region="North America")
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert 'North America' in call_kwargs['where']

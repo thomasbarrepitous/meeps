@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import Mock
 from typing import List
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.standings_parser import Standing
 
 # Import helper functions from conftest
@@ -25,7 +25,7 @@ class TestStandingsImports:
         ]
         
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
 
 class TestStandingDataclass:
@@ -136,7 +136,7 @@ class TestStandingsAPI:
         """Test basic get_standings call returns properly parsed Standing objects."""
         mock_leaguepedia_query.return_value = standings_mock_data
         
-        standings = lp.get_standings()
+        standings = mp.get_standings()
         
         assert len(standings) == 2
         assert all(isinstance(s, Standing) for s in standings)
@@ -149,7 +149,7 @@ class TestStandingsAPI:
         """Test get_standings with overview page filter."""
         mock_leaguepedia_query.return_value = standings_mock_data
         
-        standings = lp.get_standings(overview_page=TestConstants.LCK_2024_SUMMER)
+        standings = mp.get_standings(overview_page=TestConstants.LCK_2024_SUMMER)
         
         assert len(standings) == 2
         mock_leaguepedia_query.assert_called_once()
@@ -164,7 +164,7 @@ class TestStandingsAPI:
         filtered_data = [standings_mock_data[0]]
         mock_leaguepedia_query.return_value = filtered_data
         
-        standings = lp.get_standings(team=TestConstants.TEAM_T1)
+        standings = mp.get_standings(team=TestConstants.TEAM_T1)
         
         assert len(standings) == 1
         assert standings[0].team == TestConstants.TEAM_T1
@@ -178,7 +178,7 @@ class TestStandingsAPI:
         """Test get_tournament_standings convenience function."""
         mock_leaguepedia_query.return_value = standings_mock_data
         
-        standings = lp.get_tournament_standings(TestConstants.LCK_2024_SUMMER)
+        standings = mp.get_tournament_standings(TestConstants.LCK_2024_SUMMER)
         
         assert len(standings) == 2
         assert all(s.overview_page == TestConstants.LCK_2024_SUMMER for s in standings)
@@ -190,7 +190,7 @@ class TestStandingsAPI:
         filtered_data = [standings_mock_data[0]]
         mock_leaguepedia_query.return_value = filtered_data
         
-        standings = lp.get_team_standings(TestConstants.TEAM_T1)
+        standings = mp.get_team_standings(TestConstants.TEAM_T1)
         
         assert len(standings) == 1
         assert standings[0].team == TestConstants.TEAM_T1
@@ -201,7 +201,7 @@ class TestStandingsAPI:
         """Test get_standings_by_overview_page convenience function."""
         mock_leaguepedia_query.return_value = standings_mock_data
         
-        standings = lp.get_standings_by_overview_page(TestConstants.LCK_2024_SUMMER)
+        standings = mp.get_standings_by_overview_page(TestConstants.LCK_2024_SUMMER)
         
         assert len(standings) == 2
         assert_mock_called_with_table(mock_leaguepedia_query, "Standings")
@@ -216,14 +216,14 @@ class TestStandingsErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
         
         with pytest.raises(RuntimeError, match="Failed to fetch standings"):
-            lp.get_standings()
+            mp.get_standings()
     
     @pytest.mark.integration
     def test_get_standings_empty_response(self, mock_leaguepedia_query):
         """Test handling of empty API response."""
         mock_leaguepedia_query.return_value = []
         
-        standings = lp.get_standings()
+        standings = mp.get_standings()
         
         assert standings == []
         assert isinstance(standings, list)
@@ -286,7 +286,7 @@ class TestStandingsEdgeCases:
         malicious_input = "'; DROP TABLE Standings; --"
         
         # Should not raise an exception and should escape the input
-        standings = lp.get_standings(team=malicious_input)
+        standings = mp.get_standings(team=malicious_input)
         
         # Verify the input was escaped (single quotes doubled)
         call_kwargs = mock_leaguepedia_query.call_args[1] 

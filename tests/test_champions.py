@@ -5,7 +5,7 @@ from datetime import datetime
 from unittest.mock import Mock
 from typing import List
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.champions_parser import Champion
 from meeps.enums import ChampionResource, ChampionAttribute
 
@@ -28,7 +28,7 @@ class TestChampionsImports:
         ]
         
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
 
 class TestChampionDataclass:
@@ -166,7 +166,7 @@ class TestChampionsAPI:
         """Test basic get_champions call returns properly parsed Champion objects."""
         mock_leaguepedia_query.return_value = champions_mock_data
         
-        champions = lp.get_champions()
+        champions = mp.get_champions()
         
         assert len(champions) == 2
         assert all(isinstance(c, Champion) for c in champions)
@@ -181,7 +181,7 @@ class TestChampionsAPI:
         filtered_data = [champions_mock_data[0]]  # Jinx uses Mana
         mock_leaguepedia_query.return_value = filtered_data
 
-        champions = lp.get_champions(resource="Mana")
+        champions = mp.get_champions(resource="Mana")
 
         assert len(champions) == 1
         assert champions[0].resource == "Mana"
@@ -197,7 +197,7 @@ class TestChampionsAPI:
         filtered_data = [champions_mock_data[0]]  # Jinx uses Mana
         mock_leaguepedia_query.return_value = filtered_data
 
-        champions = lp.get_champions(resource=ChampionResource.MANA)
+        champions = mp.get_champions(resource=ChampionResource.MANA)
 
         assert len(champions) == 1
         assert champions[0].resource == "Mana"
@@ -213,7 +213,7 @@ class TestChampionsAPI:
         filtered_data = [champions_mock_data[0]]  # Jinx is Marksman
         mock_leaguepedia_query.return_value = filtered_data
 
-        champions = lp.get_champions(attributes="Marksman")
+        champions = mp.get_champions(attributes="Marksman")
 
         assert len(champions) == 1
         assert "Marksman" in champions[0].attributes
@@ -229,7 +229,7 @@ class TestChampionsAPI:
         filtered_data = [champions_mock_data[0]]  # Jinx is Marksman
         mock_leaguepedia_query.return_value = filtered_data
 
-        champions = lp.get_champions(attributes=ChampionAttribute.MARKSMAN)
+        champions = mp.get_champions(attributes=ChampionAttribute.MARKSMAN)
 
         assert len(champions) == 1
         assert "Marksman" in champions[0].attributes
@@ -245,7 +245,7 @@ class TestChampionsAPI:
         single_champion_data = [champions_mock_data[0]]
         mock_leaguepedia_query.return_value = single_champion_data
         
-        champion = lp.get_champion_by_name(TestConstants.CHAMPION_JINX)
+        champion = mp.get_champion_by_name(TestConstants.CHAMPION_JINX)
         
         assert isinstance(champion, Champion)
         assert champion.name == TestConstants.CHAMPION_JINX
@@ -259,7 +259,7 @@ class TestChampionsAPI:
         """Test get_champion_by_name returns None when champion not found."""
         mock_leaguepedia_query.return_value = []
         
-        champion = lp.get_champion_by_name("NonexistentChampion")
+        champion = mp.get_champion_by_name("NonexistentChampion")
         
         assert champion is None
     
@@ -269,7 +269,7 @@ class TestChampionsAPI:
         filtered_data = [champions_mock_data[1]]  # Yasuo has Fighter,Assassin
         mock_leaguepedia_query.return_value = filtered_data
 
-        champions = lp.get_champions_by_attributes("Fighter")
+        champions = mp.get_champions_by_attributes("Fighter")
 
         assert len(champions) == 1
         assert "Fighter" in champions[0].attributes
@@ -281,7 +281,7 @@ class TestChampionsAPI:
         filtered_data = [champions_mock_data[1]]  # Yasuo has Fighter,Assassin
         mock_leaguepedia_query.return_value = filtered_data
 
-        champions = lp.get_champions_by_attributes(ChampionAttribute.FIGHTER)
+        champions = mp.get_champions_by_attributes(ChampionAttribute.FIGHTER)
 
         assert len(champions) == 1
         assert "Fighter" in champions[0].attributes
@@ -293,7 +293,7 @@ class TestChampionsAPI:
         filtered_data = [champions_mock_data[1]]  # Yasuo uses Flow
         mock_leaguepedia_query.return_value = filtered_data
 
-        champions = lp.get_champions_by_resource("Flow")
+        champions = mp.get_champions_by_resource("Flow")
 
         assert len(champions) == 1
         assert champions[0].resource == "Flow"
@@ -305,7 +305,7 @@ class TestChampionsAPI:
         filtered_data = [champions_mock_data[1]]  # Yasuo uses Flow
         mock_leaguepedia_query.return_value = filtered_data
 
-        champions = lp.get_champions_by_resource(ChampionResource.FLOW)
+        champions = mp.get_champions_by_resource(ChampionResource.FLOW)
 
         assert len(champions) == 1
         assert champions[0].resource == "Flow"
@@ -316,7 +316,7 @@ class TestChampionsAPI:
         """Test get_melee_champions filters correctly."""
         mock_leaguepedia_query.return_value = champions_mock_data
         
-        melee_champions = lp.get_melee_champions()
+        melee_champions = mp.get_melee_champions()
         
         # Should only return Yasuo (175 range <= 200)
         assert len(melee_champions) == 1
@@ -328,7 +328,7 @@ class TestChampionsAPI:
         """Test get_ranged_champions filters correctly."""
         mock_leaguepedia_query.return_value = champions_mock_data
         
-        ranged_champions = lp.get_ranged_champions()
+        ranged_champions = mp.get_ranged_champions()
         
         # Should only return Jinx (525 range > 200)
         assert len(ranged_champions) == 1
@@ -345,7 +345,7 @@ class TestChampionsErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
         
         with pytest.raises(RuntimeError, match="Failed to fetch champions"):
-            lp.get_champions()
+            mp.get_champions()
     
     @pytest.mark.integration
     def test_get_champion_by_name_api_error(self, mock_leaguepedia_query):
@@ -353,14 +353,14 @@ class TestChampionsErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
         
         with pytest.raises(RuntimeError, match=f"Failed to fetch champion {TestConstants.CHAMPION_JINX}"):
-            lp.get_champion_by_name(TestConstants.CHAMPION_JINX)
+            mp.get_champion_by_name(TestConstants.CHAMPION_JINX)
     
     @pytest.mark.integration
     def test_get_champions_empty_response(self, mock_leaguepedia_query):
         """Test handling of empty API response."""
         mock_leaguepedia_query.return_value = []
         
-        champions = lp.get_champions()
+        champions = mp.get_champions()
         
         assert champions == []
         assert isinstance(champions, list)
@@ -413,7 +413,7 @@ class TestChampionsEdgeCases:
         malicious_input = "'; DROP TABLE Champions; --"
         
         # Should not raise an exception and should escape the input
-        champions = lp.get_champions(resource=malicious_input)
+        champions = mp.get_champions(resource=malicious_input)
         
         # Verify the input was escaped (single quotes doubled)
         call_kwargs = mock_leaguepedia_query.call_args[1]

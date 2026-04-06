@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import Mock, patch, MagicMock
 from typing import List, Dict, Any
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.team_parser import (
     TeamAssets,
     TeamPlayer,
@@ -100,15 +100,15 @@ class TestTeamParserImports:
         ]
 
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
     @pytest.mark.unit
     def test_team_dataclasses_importable(self):
         """Test that team dataclasses are importable."""
-        assert hasattr(lp, 'TeamAssets')
-        assert hasattr(lp, 'TeamPlayer')
-        assert lp.TeamAssets is TeamAssets
-        assert lp.TeamPlayer is TeamPlayer
+        assert hasattr(mp, 'TeamAssets')
+        assert hasattr(mp, 'TeamPlayer')
+        assert mp.TeamAssets is TeamAssets
+        assert mp.TeamPlayer is TeamPlayer
 
 
 class TestTeamPlayerDataclass:
@@ -238,7 +238,7 @@ class TestGetActivePlayers:
         """Test basic get_active_players call."""
         mock_leaguepedia_query.return_value = active_players_mock_data
 
-        players = lp.get_active_players('T1')
+        players = mp.get_active_players('T1')
 
         assert isinstance(players, list)
         assert len(players) == 5
@@ -251,7 +251,7 @@ class TestGetActivePlayers:
         """Test that get_active_players returns TeamPlayer objects."""
         mock_leaguepedia_query.return_value = active_players_mock_data
 
-        players = lp.get_active_players('T1')
+        players = mp.get_active_players('T1')
 
         player_names = [p.name for p in players]
         assert 'Faker' in player_names
@@ -264,7 +264,7 @@ class TestGetActivePlayers:
         """Test that get_active_players extracts roles correctly."""
         mock_leaguepedia_query.return_value = active_players_mock_data
 
-        players = lp.get_active_players('T1')
+        players = mp.get_active_players('T1')
 
         # Find Faker and check role extraction (Mid;Part-Owner -> Mid)
         faker = next((p for p in players if p.name == 'Faker'), None)
@@ -278,7 +278,7 @@ class TestGetActivePlayers:
         """Test that get_active_players cleans player names."""
         mock_leaguepedia_query.return_value = player_with_real_name_mock
 
-        players = lp.get_active_players('T1')
+        players = mp.get_active_players('T1')
 
         assert len(players) == 1
         assert players[0].name == 'Doran'
@@ -288,7 +288,7 @@ class TestGetActivePlayers:
         """Test get_active_players with empty result."""
         mock_leaguepedia_query.return_value = []
 
-        players = lp.get_active_players('NonexistentTeam')
+        players = mp.get_active_players('NonexistentTeam')
 
         assert players == []
 
@@ -309,7 +309,7 @@ class TestGetActivePlayers:
         """Test get_active_players with date filter."""
         mock_leaguepedia_query.return_value = active_players_mock_data
 
-        lp.get_active_players('T1', date='2022-06-01')
+        mp.get_active_players('T1', date='2022-06-01')
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert '2022-06-01' in call_kwargs['where']
@@ -324,7 +324,7 @@ class TestGetActivePlayers_SQLInjection:
         mock_leaguepedia_query.return_value = active_players_mock_data
 
         malicious_input = "'; DROP TABLE Tenures; --"
-        lp.get_active_players(malicious_input)
+        mp.get_active_players(malicious_input)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert "''" in call_kwargs['where']
@@ -335,7 +335,7 @@ class TestGetActivePlayers_SQLInjection:
         mock_leaguepedia_query.return_value = active_players_mock_data
 
         malicious_date = "2024-01-01'; DROP TABLE Tenures; --"
-        lp.get_active_players('T1', date=malicious_date)
+        mp.get_active_players('T1', date=malicious_date)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert "''" in call_kwargs['where']
@@ -350,7 +350,7 @@ class TestGetActivePlayersErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
 
         with pytest.raises(RuntimeError, match="Failed to fetch active players"):
-            lp.get_active_players('T1')
+            mp.get_active_players('T1')
 
 
 class TestGetActivePlayersEdgeCases:
@@ -369,7 +369,7 @@ class TestGetActivePlayersEdgeCases:
         ]
         mock_leaguepedia_query.return_value = mock_data
 
-        players = lp.get_active_players('T1')
+        players = mp.get_active_players('T1')
 
         # Should be empty since Head Coach is not a valid in-game role
         assert players == []
@@ -387,7 +387,7 @@ class TestGetActivePlayersEdgeCases:
         ]
         mock_leaguepedia_query.return_value = mock_data
 
-        players = lp.get_active_players('T1')
+        players = mp.get_active_players('T1')
 
         assert len(players) == 1
         assert players[0].name == "Player's Name"

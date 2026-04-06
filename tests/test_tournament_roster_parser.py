@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import Mock, patch
 from typing import List, Dict, Any
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.tournament_roster_parser import (
     TournamentRoster,
     get_tournament_rosters,
@@ -88,13 +88,13 @@ class TestTournamentRosterImports:
     @pytest.mark.unit
     def test_tournament_roster_functions_importable(self):
         """Test that all tournament roster functions are available in the main module."""
-        assert hasattr(lp, 'get_tournament_rosters')
+        assert hasattr(mp, 'get_tournament_rosters')
 
     @pytest.mark.unit
     def test_tournament_roster_dataclass_importable(self):
         """Test that TournamentRoster dataclass is importable."""
-        assert hasattr(lp, 'TournamentRoster')
-        assert lp.TournamentRoster is TournamentRoster
+        assert hasattr(mp, 'TournamentRoster')
+        assert mp.TournamentRoster is TournamentRoster
 
 
 class TestTournamentRosterDataclass:
@@ -253,7 +253,7 @@ class TestTournamentRosterAPI:
         """Test basic get_tournament_rosters call."""
         mock_leaguepedia_query.return_value = tournament_roster_mock_data
 
-        rosters = lp.get_tournament_rosters(team='T1')
+        rosters = mp.get_tournament_rosters(team='T1')
 
         assert len(rosters) == 2
         assert all(isinstance(r, TournamentRoster) for r in rosters)
@@ -266,7 +266,7 @@ class TestTournamentRosterAPI:
         """Test get_tournament_rosters with tournament filter."""
         mock_leaguepedia_query.return_value = [tournament_roster_mock_data[0]]
 
-        rosters = lp.get_tournament_rosters(team='T1', tournament='LCK 2024 Summer')
+        rosters = mp.get_tournament_rosters(team='T1', tournament='LCK 2024 Summer')
 
         assert len(rosters) == 1
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -279,7 +279,7 @@ class TestTournamentRosterAPI:
         """Test get_tournament_rosters with region filter."""
         mock_leaguepedia_query.return_value = tournament_roster_mock_data
 
-        rosters = lp.get_tournament_rosters(team='T1', region='Korea')
+        rosters = mp.get_tournament_rosters(team='T1', region='Korea')
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert 'Region' in call_kwargs['where']
@@ -291,7 +291,7 @@ class TestTournamentRosterAPI:
         """Test get_tournament_rosters with is_complete filter."""
         mock_leaguepedia_query.return_value = tournament_roster_mock_data
 
-        rosters = lp.get_tournament_rosters(team='T1', is_complete=True)
+        rosters = mp.get_tournament_rosters(team='T1', is_complete=True)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert 'IsComplete' in call_kwargs['where']
@@ -302,7 +302,7 @@ class TestTournamentRosterAPI:
         """Test get_tournament_rosters with empty result."""
         mock_leaguepedia_query.return_value = []
 
-        rosters = lp.get_tournament_rosters(team='NonexistentTeam')
+        rosters = mp.get_tournament_rosters(team='NonexistentTeam')
 
         assert rosters == []
         assert isinstance(rosters, list)
@@ -317,7 +317,7 @@ class TestTournamentRosterErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
 
         with pytest.raises(RuntimeError, match="Failed to fetch tournament rosters"):
-            lp.get_tournament_rosters(team='T1')
+            mp.get_tournament_rosters(team='T1')
 
     @pytest.mark.integration
     def test_get_tournament_rosters_sql_injection_protection(
@@ -327,7 +327,7 @@ class TestTournamentRosterErrorHandling:
         mock_leaguepedia_query.return_value = tournament_roster_mock_data
 
         malicious_input = "'; DROP TABLE TournamentRosters; --"
-        rosters = lp.get_tournament_rosters(team=malicious_input)
+        rosters = mp.get_tournament_rosters(team=malicious_input)
 
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert "''" in call_kwargs['where']
@@ -372,7 +372,7 @@ class TestTournamentRosterEdgeCases:
         """Test get_tournament_rosters with order_by parameter."""
         mock_leaguepedia_query.return_value = tournament_roster_mock_data
 
-        rosters = lp.get_tournament_rosters(
+        rosters = mp.get_tournament_rosters(
             team='T1',
             order_by='TournamentRosters.Tournament DESC'
         )

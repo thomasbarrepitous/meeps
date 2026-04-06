@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import Mock, patch
 from typing import List, Any, Dict
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.standings_parser import Standing
 from meeps.parsers.champions_parser import Champion
 from meeps.parsers.items_parser import Item
@@ -22,10 +22,10 @@ class TestCrossModuleIntegration:
         mock_leaguepedia_query.return_value = []
         
         # Call functions from each parser module
-        lp.get_standings()
-        lp.get_champions()
-        lp.get_items()
-        lp.get_roster_changes()
+        mp.get_standings()
+        mp.get_champions()
+        mp.get_items()
+        mp.get_roster_changes()
         
         # Verify all calls went through the same mock
         assert mock_leaguepedia_query.call_count == 4
@@ -42,16 +42,16 @@ class TestCrossModuleIntegration:
         
         # All should raise RuntimeError with descriptive message
         with pytest.raises(RuntimeError, match="Failed to fetch standings"):
-            lp.get_standings()
+            mp.get_standings()
         
         with pytest.raises(RuntimeError, match="Failed to fetch champions"):
-            lp.get_champions()
+            mp.get_champions()
         
         with pytest.raises(RuntimeError, match="Failed to fetch items"):
-            lp.get_items()
+            mp.get_items()
         
         with pytest.raises(RuntimeError, match="Failed to fetch roster changes"):
-            lp.get_roster_changes()
+            mp.get_roster_changes()
 
 
 class TestComplexQueryScenarios:
@@ -63,7 +63,7 @@ class TestComplexQueryScenarios:
         mock_data = test_data_factory.create_standings_mock_response()
         mock_leaguepedia_query.return_value = mock_data
         
-        standings = lp.get_standings(
+        standings = mp.get_standings(
             overview_page=TestConstants.LCK_2024_SUMMER,
             team=TestConstants.TEAM_T1
         )
@@ -82,7 +82,7 @@ class TestComplexQueryScenarios:
         mock_data = test_data_factory.create_champions_mock_response()
         mock_leaguepedia_query.return_value = mock_data
         
-        champions = lp.get_champions(resource="Mana", attributes="Marksman")
+        champions = mp.get_champions(resource="Mana", attributes="Marksman")
         
         assert len(champions) == 2
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -98,7 +98,7 @@ class TestComplexQueryScenarios:
         mock_data = test_data_factory.create_roster_changes_mock_response()
         mock_leaguepedia_query.return_value = mock_data
         
-        changes = lp.get_roster_changes(
+        changes = mp.get_roster_changes(
             team=TestConstants.TEAM_T1,
             start_date="2013-01-01",
             end_date="2013-12-31"
@@ -122,7 +122,7 @@ class TestDataConsistency:
         # Test string fields
         standings_data = test_data_factory.create_standings_mock_response()
         mock_leaguepedia_query.return_value = standings_data
-        standings = lp.get_standings()
+        standings = mp.get_standings()
         
         assert all(isinstance(s.team, str) for s in standings if s.team)
         assert all(isinstance(s.overview_page, str) for s in standings if s.overview_page)
@@ -130,7 +130,7 @@ class TestDataConsistency:
         # Test integer fields
         champions_data = test_data_factory.create_champions_mock_response()
         mock_leaguepedia_query.return_value = champions_data
-        champions = lp.get_champions()
+        champions = mp.get_champions()
         
         # Verify numeric fields are properly typed
         for champion in champions:
@@ -143,10 +143,10 @@ class TestDataConsistency:
     def test_consistent_error_response_format(self, mock_leaguepedia_query):
         """Test that all modules return consistent error formats."""
         test_cases = [
-            (lp.get_standings, "Failed to fetch standings"),
-            (lp.get_champions, "Failed to fetch champions"),
-            (lp.get_items, "Failed to fetch items"),
-            (lp.get_roster_changes, "Failed to fetch roster changes")
+            (mp.get_standings, "Failed to fetch standings"),
+            (mp.get_champions, "Failed to fetch champions"),
+            (mp.get_items, "Failed to fetch items"),
+            (mp.get_roster_changes, "Failed to fetch roster changes")
         ]
         
         for func, expected_message in test_cases:
@@ -180,7 +180,7 @@ class TestPerformanceAndScaling:
         
         mock_leaguepedia_query.return_value = large_standings_data
         
-        standings = lp.get_standings()
+        standings = mp.get_standings()
         
         assert len(standings) == 100
         assert all(isinstance(s, Standing) for s in standings)
@@ -195,10 +195,10 @@ class TestPerformanceAndScaling:
         mock_leaguepedia_query.return_value = []
         
         # All should return empty lists
-        assert lp.get_standings() == []
-        assert lp.get_champions() == []
-        assert lp.get_items() == []
-        assert lp.get_roster_changes() == []
+        assert mp.get_standings() == []
+        assert mp.get_champions() == []
+        assert mp.get_items() == []
+        assert mp.get_roster_changes() == []
     
     @pytest.mark.integration
     def test_partial_data_handling(self, mock_leaguepedia_query):
@@ -211,7 +211,7 @@ class TestPerformanceAndScaling:
         }]
         
         mock_leaguepedia_query.return_value = minimal_standings
-        standings = lp.get_standings()
+        standings = mp.get_standings()
         
         assert len(standings) == 1
         assert standings[0].team == TestConstants.TEAM_T1
@@ -229,10 +229,10 @@ class TestAPIContractCompliance:
         """Test that all functions return expected types."""
         # Test list-returning functions
         list_functions = [
-            (lp.get_standings, test_data_factory.create_standings_mock_response()),
-            (lp.get_champions, test_data_factory.create_champions_mock_response()),
-            (lp.get_items, test_data_factory.create_items_mock_response()),
-            (lp.get_roster_changes, test_data_factory.create_roster_changes_mock_response())
+            (mp.get_standings, test_data_factory.create_standings_mock_response()),
+            (mp.get_champions, test_data_factory.create_champions_mock_response()),
+            (mp.get_items, test_data_factory.create_items_mock_response()),
+            (mp.get_roster_changes, test_data_factory.create_roster_changes_mock_response())
         ]
         
         for func, mock_data in list_functions:
@@ -247,8 +247,8 @@ class TestAPIContractCompliance:
         
         # Test single-item returning functions
         single_item_functions = [
-            (lp.get_champion_by_name, test_data_factory.create_champions_mock_response()[:1]),
-            (lp.get_item_by_name, test_data_factory.create_items_mock_response()[:1])
+            (mp.get_champion_by_name, test_data_factory.create_champions_mock_response()[:1]),
+            (mp.get_item_by_name, test_data_factory.create_items_mock_response()[:1])
         ]
         
         for func, mock_data in single_item_functions:
@@ -264,9 +264,9 @@ class TestAPIContractCompliance:
         mock_leaguepedia_query.return_value = []
         
         # Test None parameters don't break queries
-        lp.get_standings(overview_page=None, team=None)
-        lp.get_champions(resource=None, attributes=None)
-        lp.get_roster_changes(team=None, player=None, action=None)
+        mp.get_standings(overview_page=None, team=None)
+        mp.get_champions(resource=None, attributes=None)
+        mp.get_roster_changes(team=None, player=None, action=None)
         
         # All should complete without errors
         assert mock_leaguepedia_query.call_count == 3
@@ -282,14 +282,14 @@ class TestRealWorldScenarios:
         standings_data = test_data_factory.create_standings_mock_response()
         mock_leaguepedia_query.return_value = standings_data
         
-        standings = lp.get_tournament_standings(TestConstants.LCK_2024_SUMMER)
+        standings = mp.get_tournament_standings(TestConstants.LCK_2024_SUMMER)
         top_team = standings[0].team  # T1
         
         # Step 2: Get roster changes for top team
         roster_data = test_data_factory.create_roster_changes_mock_response()
         mock_leaguepedia_query.return_value = [roster_data[0]]  # T1 data only
         
-        roster_changes = lp.get_team_roster_changes(top_team)
+        roster_changes = mp.get_team_roster_changes(top_team)
         
         # Step 3: Verify workflow completion
         assert len(standings) == 2
@@ -307,13 +307,13 @@ class TestRealWorldScenarios:
         champions_data = test_data_factory.create_champions_mock_response()
         mock_leaguepedia_query.return_value = [champions_data[0]]  # Jinx only
         
-        marksmen = lp.get_champions_by_attributes("Marksman")
+        marksmen = mp.get_champions_by_attributes("Marksman")
         
         # Step 2: Get AD items for marksmen
         items_data = test_data_factory.create_items_mock_response()
         mock_leaguepedia_query.return_value = [items_data[0]]  # Infinity Edge only
         
-        ad_items = lp.get_ad_items()
+        ad_items = mp.get_ad_items()
         
         # Step 3: Verify analysis results
         assert len(marksmen) == 1
@@ -346,10 +346,10 @@ class TestConcurrentAccess:
         
         # Execute multiple queries rapidly
         results = []
-        results.append(lp.get_standings())
-        results.append(lp.get_champions())
-        results.append(lp.get_items())
-        results.append(lp.get_roster_changes())
+        results.append(mp.get_standings())
+        results.append(mp.get_champions())
+        results.append(mp.get_items())
+        results.append(mp.get_roster_changes())
         
         # Verify all queries completed successfully
         assert len(results) == 4
@@ -378,8 +378,8 @@ class TestEdgeCasesIntegration:
         
         for special_input in special_chars_inputs:
             # Should not raise exceptions
-            lp.get_standings(team=special_input)
-            lp.get_roster_changes(team=special_input)
+            mp.get_standings(team=special_input)
+            mp.get_roster_changes(team=special_input)
             
             # Verify SQL injection protection
             call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -402,8 +402,8 @@ class TestEdgeCasesIntegration:
         
         for unicode_input in unicode_inputs:
             # Should handle Unicode without errors
-            lp.get_standings(team=unicode_input)
-            lp.get_roster_changes(player=unicode_input)
+            mp.get_standings(team=unicode_input)
+            mp.get_roster_changes(player=unicode_input)
             
             # Verify call was made
             assert mock_leaguepedia_query.called

@@ -3,7 +3,7 @@
 import pytest
 from unittest.mock import patch
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.vods_parser import GameVod
 
 from .conftest import TestConstants, assert_valid_dataclass_instance
@@ -24,12 +24,12 @@ class TestVodsImports:
         ]
 
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
     @pytest.mark.unit
     def test_game_vod_dataclass_importable(self):
         """Test that GameVod dataclass is importable."""
-        assert hasattr(lp, "GameVod")
+        assert hasattr(mp, "GameVod")
 
 
 class TestGameVodDataclass:
@@ -133,7 +133,7 @@ class TestVodsAPI:
         # Return only items with VODs (first two)
         mock_leaguepedia_query.return_value = vods_mock_data[:2]
 
-        vods = lp.get_vods()
+        vods = mp.get_vods()
 
         assert len(vods) == 2
         assert all(isinstance(v, GameVod) for v in vods)
@@ -145,7 +145,7 @@ class TestVodsAPI:
         """Test get_vods with tournament filter."""
         mock_leaguepedia_query.return_value = vods_mock_data[:2]
 
-        vods = lp.get_vods(tournament=TestConstants.LCK_2024_SUMMER)
+        vods = mp.get_vods(tournament=TestConstants.LCK_2024_SUMMER)
 
         mock_leaguepedia_query.assert_called_once()
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -158,7 +158,7 @@ class TestVodsAPI:
         """Test get_vods with team filter."""
         mock_leaguepedia_query.return_value = vods_mock_data[:2]
 
-        vods = lp.get_vods(team="T1")
+        vods = mp.get_vods(team="T1")
 
         mock_leaguepedia_query.assert_called_once()
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -169,7 +169,7 @@ class TestVodsAPI:
         """Test get_vods with with_vod_only=False returns all games."""
         mock_leaguepedia_query.return_value = vods_mock_data
 
-        vods = lp.get_vods(with_vod_only=False)
+        vods = mp.get_vods(with_vod_only=False)
 
         assert len(vods) == 3
         # Third VOD has no URL
@@ -180,7 +180,7 @@ class TestVodsAPI:
         """Test get_vod_by_game_id returns single game."""
         mock_leaguepedia_query.return_value = [vods_mock_data[0]]
 
-        vod = lp.get_vod_by_game_id("GAME001")
+        vod = mp.get_vod_by_game_id("GAME001")
 
         assert isinstance(vod, GameVod)
         assert vod.game_id == "GAME001"
@@ -191,7 +191,7 @@ class TestVodsAPI:
         """Test get_vod_by_game_id returns None when not found."""
         mock_leaguepedia_query.return_value = []
 
-        vod = lp.get_vod_by_game_id("NONEXISTENT")
+        vod = mp.get_vod_by_game_id("NONEXISTENT")
 
         assert vod is None
 
@@ -200,7 +200,7 @@ class TestVodsAPI:
         """Test get_vods_by_match returns all games in a match."""
         mock_leaguepedia_query.return_value = vods_mock_data[:2]
 
-        vods = lp.get_vods_by_match("MATCH001")
+        vods = mp.get_vods_by_match("MATCH001")
 
         assert len(vods) == 2
         assert all(v.match_id == "MATCH001" for v in vods)
@@ -211,7 +211,7 @@ class TestVodsAPI:
         """Test get_team_vods convenience function."""
         mock_leaguepedia_query.return_value = vods_mock_data[:2]
 
-        vods = lp.get_team_vods("T1")
+        vods = mp.get_team_vods("T1")
 
         assert len(vods) == 2
         mock_leaguepedia_query.assert_called_once()
@@ -221,7 +221,7 @@ class TestVodsAPI:
         """Test get_tournament_vods convenience function."""
         mock_leaguepedia_query.return_value = vods_mock_data[:2]
 
-        vods = lp.get_tournament_vods(TestConstants.LCK_2024_SUMMER)
+        vods = mp.get_tournament_vods(TestConstants.LCK_2024_SUMMER)
 
         assert len(vods) == 2
         mock_leaguepedia_query.assert_called_once()
@@ -236,7 +236,7 @@ class TestVodsErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
 
         with pytest.raises(RuntimeError, match="Failed to fetch VODs"):
-            lp.get_vods()
+            mp.get_vods()
 
     @pytest.mark.integration
     def test_get_vod_by_game_id_api_error(self, mock_leaguepedia_query):
@@ -244,7 +244,7 @@ class TestVodsErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
 
         with pytest.raises(RuntimeError, match="Failed to fetch VOD for game"):
-            lp.get_vod_by_game_id("GAME001")
+            mp.get_vod_by_game_id("GAME001")
 
     @pytest.mark.integration
     def test_get_vods_by_match_api_error(self, mock_leaguepedia_query):
@@ -252,14 +252,14 @@ class TestVodsErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
 
         with pytest.raises(RuntimeError, match="Failed to fetch VODs for match"):
-            lp.get_vods_by_match("MATCH001")
+            mp.get_vods_by_match("MATCH001")
 
     @pytest.mark.integration
     def test_get_vods_empty_response(self, mock_leaguepedia_query):
         """Test handling of empty API response."""
         mock_leaguepedia_query.return_value = []
 
-        vods = lp.get_vods()
+        vods = mp.get_vods()
 
         assert vods == []
         assert isinstance(vods, list)
@@ -297,7 +297,7 @@ class TestVodsEdgeCases:
         malicious_input = "'; DROP TABLE MatchScheduleGame; --"
 
         # Should not raise an exception and should escape the input
-        lp.get_vods(team=malicious_input)
+        mp.get_vods(team=malicious_input)
 
         # Verify the input was escaped
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -334,7 +334,7 @@ class TestVodsDataParsing:
         }]
         mock_leaguepedia_query.return_value = mock_data
 
-        vods = lp.get_vods(with_vod_only=False)
+        vods = mp.get_vods(with_vod_only=False)
 
         assert len(vods) == 1
         assert vods[0].vod_url is None
@@ -347,7 +347,7 @@ class TestVodsDataParsing:
         """Test that numeric fields are correctly parsed."""
         mock_leaguepedia_query.return_value = [vods_mock_data[0]]
 
-        vods = lp.get_vods()
+        vods = mp.get_vods()
 
         assert vods[0].winner == 1
         assert vods[0].game_number == 1

@@ -33,11 +33,15 @@ A **comprehensive** Leaguepedia parser providing easy access to League of Legend
 # With pip
 pip install meeps
 
+# With caching support (recommended)
+pip install meeps[cache]
+
 # With Poetry
 poetry add meeps
+poetry add meeps -E cache  # with caching
 
 # Quick verification
-python -c "import meeps as lp; print('✅ Import successful')"
+python -c "import meeps as mp; print('✅ Import successful')"
 ```
 
 ## Demo
@@ -47,101 +51,101 @@ python -c "import meeps as lp; print('✅ Import successful')"
 ## Usage
 
 ```python
-import meeps as lp
+import meeps as mp
 
 # Games & Tournaments
-regions = lp.get_regions()
+regions = mp.get_regions()
 # ['Korea', 'Europe', 'North America', 'China', ...]
 
-tournaments = lp.get_tournaments("Korea", year=2020)
+tournaments = mp.get_tournaments("Korea", year=2020)
 # [{'name': 'LCK/2020 Season/Spring Season', 'region': 'Korea'}, ...]
 
-games = lp.get_games("LCK/2020 Season/Spring Season")
+games = mp.get_games("LCK/2020 Season/Spring Season")
 # [Game(team1='T1', team2='GenG', winner='T1', date='2020-02-05'), ...]
 
 # Teams & Assets
-logo_url = lp.get_team_logo('T1')
+logo_url = mp.get_team_logo('T1')
 # 'https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/t1_logo.png'
 
-team_assets = lp.get_all_team_assets('T1')
+team_assets = mp.get_all_team_assets('T1')
 # TeamAssets(logo='...', thumbnail='...', team_name='T1')
 
-active_players = lp.get_active_players('T1')
+active_players = mp.get_active_players('T1')
 # [TeamPlayer(name='Faker', role='Mid'), TeamPlayer(name='Gumayusi', role='Bot'), ...]
 
 # Players
-player = lp.get_player_by_name('Faker')
+player = mp.get_player_by_name('Faker')
 # PlayerInfo(name='Faker', country='South Korea', birth_date='1996-05-07', status=ACTIVE)
 
 # Tournament Rosters
-rosters = lp.get_tournament_rosters('T1', 'LCK/2024 Season/Summer Season')
+rosters = mp.get_tournament_rosters('T1', 'LCK/2024 Season/Summer Season')
 # [{'Team': 'T1', 'Tournament': 'LCK/2024...', 'Player': 'Faker', 'Role': 'Mid'}, ...]
 
 # Standings
-standings = lp.get_tournament_standings("LCK/2024 Season/Summer Season")
+standings = mp.get_tournament_standings("LCK/2024 Season/Summer Season")
 # [Standing(team='T1', place=1, win_series=16, loss_series=2), ...]
 
 # Champions
-champions = lp.get_champions_by_attributes("Marksman")
+champions = mp.get_champions_by_attributes("Marksman")
 # [Champion(name='Jinx', attributes='Marksman', attack_range=525), ...]
 
-champion = lp.get_champion_by_name("Jinx")
+champion = mp.get_champion_by_name("Jinx")
 # Champion(name='Jinx', attributes='Marksman', attack_range=525, is_ranged=True)
 
 # Items
-ad_items = lp.get_ad_items()
+ad_items = mp.get_ad_items()
 # [Item(name='Infinity Edge', ad=70, total_cost=3400), ...]
 
-crit_items = lp.search_items_by_stat("Crit")
+crit_items = mp.search_items_by_stat("Crit")
 # [Item(name='Infinity Edge', crit=20), Item(name='Stormrazor', crit=15), ...]
 
-infinity_edge = lp.get_item_by_name("Infinity Edge")
+infinity_edge = mp.get_item_by_name("Infinity Edge")
 # Item(name='Infinity Edge', ad=70, crit=20, total_cost=3400, provides_ad=True)
 
 # Roster Changes
-roster_changes = lp.get_team_roster_changes("T1")
+roster_changes = mp.get_team_roster_changes("T1")
 # [RosterChange(player='Faker', direction='Join', team='T1', date=2013-01-01), ...]
 
-recent_moves = lp.get_recent_roster_changes(days=30)
+recent_moves = mp.get_recent_roster_changes(days=30)
 # [RosterChange(player='Caps', direction='Leave', team='G2', date=2024-11-15), ...]
 
 # 📊 Player Performance Analytics
 # Get individual match statistics
-faker_matches = lp.get_player_match_history("Faker", limit=5)
+faker_matches = mp.get_player_match_history("Faker", limit=5)
 for match in faker_matches:
     print(f"{match.champion}: {match.kda_ratio:.1f} KDA, {match.performance_grade} grade")
     # Azir: 20.0 KDA, S grade
 
 # Team performance analysis
-t1_performance = lp.get_team_match_performance("T1", tournament="LCK/2024 Season/Summer Season")
+t1_performance = mp.get_team_match_performance("T1", tournament="LCK/2024 Season/Summer Season")
 avg_kda = sum(p.kda_ratio for p in t1_performance if p.kda_ratio) / len(t1_performance)
 # Calculate team statistics: average KDA, win rates, damage distribution
 
 # Champion meta analysis
-azir_stats = lp.get_champion_performance_stats("Azir", tournament="LCK/2024 Season/Summer Season")
+azir_stats = mp.get_champion_performance_stats("Azir", tournament="LCK/2024 Season/Summer Season")
 win_rate = sum(1 for p in azir_stats if p.did_win) / len(azir_stats) * 100
 # Analyze champion effectiveness across different players and tournaments
 
 # Role performance comparison
-mid_players = lp.get_role_performance_comparison("LCK/2024 Season/Summer Season", "Mid")
+mid_players = mp.get_role_performance_comparison("LCK/2024 Season/Summer Season", "Mid")
 top_performer = max(mid_players, key=lambda p: p.kda_ratio or 0)
 # Compare player performance within specific roles
 
 # MVP candidate detection
-mvp_candidates = lp.get_tournament_mvp_candidates("LCK/2024 Season/Summer Season", min_games=10)
+mvp_candidates = mp.get_tournament_mvp_candidates("LCK/2024 Season/Summer Season", min_games=10)
 # Identify top-performing players based on consistency and performance metrics
 
 # 📋 Contract Management
 # Get active contracts
-active_contracts = lp.get_active_contracts()
+active_contracts = mp.get_active_contracts()
 # [Contract(player='Faker', team='T1', contract_end='2025-12-31'), ...]
 
 # Check expiring contracts
-expiring_soon = lp.get_expiring_contracts(days=90)
+expiring_soon = mp.get_expiring_contracts(days=90)
 # Monitor contract renewals and potential free agents
 
 # Player contract history
-faker_contracts = lp.get_player_contracts("Faker")
+faker_contracts = mp.get_player_contracts("Faker")
 # Track contract changes and team commitments
 ```
 
@@ -150,45 +154,45 @@ faker_contracts = lp.get_player_contracts("Faker")
 ```python
 # 📊 Performance Analysis & Fantasy Esports
 # Track individual player performance and trends
-faker_stats = lp.get_player_match_history("Faker", limit=10)
+faker_stats = mp.get_player_match_history("Faker", limit=10)
 performance_trend = [game.performance_grade for game in faker_stats]
 avg_kda = sum(game.kda_ratio for game in faker_stats if game.kda_ratio) / len(faker_stats)
 
 # Identify MVP candidates for tournaments
-mvps = lp.get_tournament_mvp_candidates("LCK/2024 Season/Summer Season")
+mvps = mp.get_tournament_mvp_candidates("LCK/2024 Season/Summer Season")
 top_mvp = mvps[0]  # Highest performing player
 print(f"Tournament MVP: {top_mvp.player_name} - {top_mvp.kda_ratio:.1f} KDA")
 
 # 🏆 Tournament & Team Analysis
-standings = lp.get_tournament_standings("LCK/2024 Season/Summer Season")
+standings = mp.get_tournament_standings("LCK/2024 Season/Summer Season")
 top_team = standings[0].team
-roster = lp.get_tournament_rosters(top_team, "LCK/2024 Season/Summer Season")
+roster = mp.get_tournament_rosters(top_team, "LCK/2024 Season/Summer Season")
 
 # Analyze team synergy and individual contributions
-team_performance = lp.get_team_match_performance(top_team, limit=20)
+team_performance = mp.get_team_match_performance(top_team, limit=20)
 team_avg_damage = sum(p.damage_to_champions for p in team_performance if p.damage_to_champions)
 
 # 📋 Contract & Roster Management
 # Monitor contract expirations for potential transfers
-expiring_contracts = lp.get_expiring_contracts(days=180)
+expiring_contracts = mp.get_expiring_contracts(days=180)
 free_agents_soon = [c.player for c in expiring_contracts if c.team == "T1"]
 
 # Track roster changes and team building
-recent_moves = lp.get_recent_roster_changes(days=7)
-team_additions = lp.get_roster_additions(team="T1")
+recent_moves = mp.get_recent_roster_changes(days=7)
+team_additions = mp.get_roster_additions(team="T1")
 
 # 🎮 Meta Analysis & Champion Research
 # Analyze champion effectiveness across different skill levels
-azir_performance = lp.get_champion_performance_stats("Azir")
+azir_performance = mp.get_champion_performance_stats("Azir")
 azir_win_rate = sum(1 for p in azir_performance if p.did_win) / len(azir_performance)
 
 # Compare role effectiveness
-mid_players = lp.get_role_performance_comparison("LCK/2024 Season/Summer Season", "Mid")
-support_players = lp.get_role_performance_comparison("LEC/2024 Season/Summer Season", "Support")
+mid_players = mp.get_role_performance_comparison("LCK/2024 Season/Summer Season", "Mid")
+support_players = mp.get_role_performance_comparison("LEC/2024 Season/Summer Season", "Support")
 
 # Item meta analysis
-marksmen = lp.get_champions_by_attributes("Marksman")
-crit_items = lp.search_items_by_stat("Crit")
+marksmen = mp.get_champions_by_attributes("Marksman")
+crit_items = mp.search_items_by_stat("Crit")
 ```
 
 ## 📚 Data Sources
@@ -249,11 +253,88 @@ Leaguepedia has rate limits. Best practices:
 
 ```python
 # Good - bounded query
-games = lp.get_games("LCK/2024 Season/Summer Season", limit=10)
+games = mp.get_games("LCK/2024 Season/Summer Season", limit=10)
 
 # Slow - unbounded, fetches years of data
-games = lp.get_games()  # Avoid this
+games = mp.get_games()  # Avoid this
 ```
+
+### Caching
+
+For heavy usage, enable HTTP-level caching to avoid repeated API calls. The library provides built-in support via `requests-cache`.
+
+**Installation:**
+
+```bash
+# Install with cache support
+pip install meeps[cache]
+
+# Or add requests-cache separately
+pip install requests-cache
+```
+
+**Built-in cache support:**
+
+```python
+import meeps as mp
+
+# Enable caching (SQLite backend, 1 hour TTL)
+mp.enable_cache()
+
+# First call hits the API
+standings = mp.get_tournament_standings("LCK/2024 Season/Summer Season")
+
+# Second call returns cached data instantly
+standings = mp.get_tournament_standings("LCK/2024 Season/Summer Season")
+
+# Check cache status
+print(mp.get_cache_info())
+# {'size': 1, 'backend': 'SQLiteCache', 'expire_after': 3600}
+
+# Clear cache when you need fresh data
+mp.clear_cache()
+
+# Disable caching
+mp.disable_cache()
+```
+
+**Configuration options:**
+
+```python
+# Custom TTL (24 hours)
+mp.enable_cache(expire_after=86400)
+
+# In-memory cache (faster, not persistent)
+mp.enable_cache(backend='memory')
+
+# Custom cache location
+mp.enable_cache(cache_dir='/path/to/cache')
+
+# No expiration (manual clear only)
+mp.enable_cache(expire_after=None)
+```
+
+**Manual approach (without built-in support):**
+
+```python
+import requests_cache
+
+# Install cache before importing meeps
+requests_cache.install_cache('leaguepedia_cache', expire_after=3600)
+
+import meeps as mp
+# All requests are now cached automatically
+```
+
+**Recommended TTLs by data type:**
+
+| Data Type | Suggested TTL | Reason |
+|-----------|---------------|--------|
+| Champions, Items | 1 week (604800s) | Rarely changes |
+| Tournament standings | 1-6 hours | Updates after matches |
+| Match schedules | 1 hour | Can change day-of |
+| Roster changes | 1 day (86400s) | Updates periodically |
+| Live/recent matches | 5-15 minutes | Frequent updates |
 
 ## 📋 Data Types
 
@@ -276,12 +357,12 @@ games = lp.get_games()  # Avoid this
 
 ```python
 # ✅ GOOD: Use filters and limits for responsive queries
-faker_recent = lp.get_player_match_history("Faker", limit=10)
-t1_lck = lp.get_team_match_performance("T1", tournament="LCK/2024 Season/Summer Season")
-specific_game = lp.get_game_scoreboard("ESPORTSTMNT01_2024_LCK_Game123")
+faker_recent = mp.get_player_match_history("Faker", limit=10)
+t1_lck = mp.get_team_match_performance("T1", tournament="LCK/2024 Season/Summer Season")
+specific_game = mp.get_game_scoreboard("ESPORTSTMNT01_2024_LCK_Game123")
 
 # ⚠️ SLOW: Large unbounded queries (10+ years of data)
-# all_faker_games = lp.get_player_match_history("Faker")  # Takes minutes!
+# all_faker_games = mp.get_player_match_history("Faker")  # Takes minutes!
 ```
 
 **Best Practices:**

@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import Mock, patch
 
 # Import the new parsers
-import meeps as lp
+import meeps as mp
 from meeps.parsers.standings_parser import Standing
 from meeps.parsers.champions_parser import Champion
 from meeps.parsers.items_parser import Item
@@ -16,10 +16,10 @@ class TestStandings:
     
     def test_get_standings_import(self):
         """Test that standings functions are importable."""
-        assert hasattr(lp, 'get_standings')
-        assert hasattr(lp, 'get_tournament_standings')
-        assert hasattr(lp, 'get_team_standings')
-        assert hasattr(lp, 'get_standings_by_overview_page')
+        assert hasattr(mp, 'get_standings')
+        assert hasattr(mp, 'get_tournament_standings')
+        assert hasattr(mp, 'get_team_standings')
+        assert hasattr(mp, 'get_standings_by_overview_page')
     
     def test_standing_dataclass(self):
         """Test Standing dataclass and properties."""
@@ -45,12 +45,12 @@ class TestChampions:
     
     def test_get_champions_import(self):
         """Test that champions functions are importable."""
-        assert hasattr(lp, 'get_champions')
-        assert hasattr(lp, 'get_champion_by_name')
-        assert hasattr(lp, 'get_champions_by_attributes')
-        assert hasattr(lp, 'get_champions_by_resource')
-        assert hasattr(lp, 'get_melee_champions')
-        assert hasattr(lp, 'get_ranged_champions')
+        assert hasattr(mp, 'get_champions')
+        assert hasattr(mp, 'get_champion_by_name')
+        assert hasattr(mp, 'get_champions_by_attributes')
+        assert hasattr(mp, 'get_champions_by_resource')
+        assert hasattr(mp, 'get_melee_champions')
+        assert hasattr(mp, 'get_ranged_champions')
     
     def test_champion_dataclass(self):
         """Test Champion dataclass and properties."""
@@ -69,14 +69,14 @@ class TestItems:
     
     def test_get_items_import(self):
         """Test that items functions are importable."""
-        assert hasattr(lp, 'get_items')
-        assert hasattr(lp, 'get_item_by_name')
-        assert hasattr(lp, 'get_items_by_tier')
-        assert hasattr(lp, 'get_ad_items')
-        assert hasattr(lp, 'get_ap_items')
-        assert hasattr(lp, 'get_tank_items')
-        assert hasattr(lp, 'get_health_items')
-        assert hasattr(lp, 'search_items_by_stat')
+        assert hasattr(mp, 'get_items')
+        assert hasattr(mp, 'get_item_by_name')
+        assert hasattr(mp, 'get_items_by_tier')
+        assert hasattr(mp, 'get_ad_items')
+        assert hasattr(mp, 'get_ap_items')
+        assert hasattr(mp, 'get_tank_items')
+        assert hasattr(mp, 'get_health_items')
+        assert hasattr(mp, 'search_items_by_stat')
     
     def test_item_dataclass(self):
         """Test Item dataclass and properties."""
@@ -96,13 +96,13 @@ class TestRosterChanges:
     
     def test_get_roster_changes_import(self):
         """Test that roster changes functions are importable."""
-        assert hasattr(lp, 'get_roster_changes')
-        assert hasattr(lp, 'get_team_roster_changes')
-        assert hasattr(lp, 'get_player_roster_changes')
-        assert hasattr(lp, 'get_recent_roster_changes')
-        assert hasattr(lp, 'get_roster_additions')
-        assert hasattr(lp, 'get_roster_removals')
-        assert hasattr(lp, 'get_retirements')
+        assert hasattr(mp, 'get_roster_changes')
+        assert hasattr(mp, 'get_team_roster_changes')
+        assert hasattr(mp, 'get_player_roster_changes')
+        assert hasattr(mp, 'get_recent_roster_changes')
+        assert hasattr(mp, 'get_roster_additions')
+        assert hasattr(mp, 'get_roster_removals')
+        assert hasattr(mp, 'get_retirements')
     
     def test_roster_change_dataclass(self):
         """Test RosterChange dataclass and properties."""
@@ -134,7 +134,7 @@ class TestIntegration:
             }
         ]
         
-        champions = lp.get_champions_by_attributes("Marksman")
+        champions = mp.get_champions_by_attributes("Marksman")
         
         assert len(champions) == 1
         assert champions[0].name == "Jinx"
@@ -155,7 +155,7 @@ class TestIntegration:
             }
         ]
         
-        standings = lp.get_tournament_standings("LCK/2024 Season/Summer Season")
+        standings = mp.get_tournament_standings("LCK/2024 Season/Summer Season")
         
         assert len(standings) == 1
         assert standings[0].team == "T1"

@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.match_schedule_parser import (
     MatchSchedule,
     get_match_schedule,
@@ -483,12 +483,12 @@ class TestMatchScheduleImports:
         ]
 
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
     @pytest.mark.unit
     def test_match_schedule_dataclass_importable(self):
         """Test that MatchSchedule dataclass is importable from main module."""
-        assert hasattr(lp, "MatchSchedule")
+        assert hasattr(mp, "MatchSchedule")
 
 
 if __name__ == "__main__":

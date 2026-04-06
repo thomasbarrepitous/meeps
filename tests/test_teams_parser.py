@@ -3,7 +3,7 @@
 import pytest
 from unittest.mock import patch
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.teams_parser import (
     Team,
     get_teams,
@@ -352,12 +352,12 @@ class TestTeamsImports:
         ]
 
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
     @pytest.mark.unit
     def test_team_dataclass_importable(self):
         """Test that Team dataclass is importable from main module."""
-        assert hasattr(lp, "Team")
+        assert hasattr(mp, "Team")
 
 
 if __name__ == "__main__":

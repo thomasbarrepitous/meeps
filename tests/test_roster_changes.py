@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
 from typing import List
 
-import meeps as lp
+import meeps as mp
 from meeps.parsers.roster_changes_parser import RosterChange, RosterAction
 
 from .conftest import TestConstants, assert_valid_dataclass_instance, assert_mock_called_with_table
@@ -28,7 +28,7 @@ class TestRosterChangesImports:
         ]
         
         for func_name in expected_functions:
-            assert hasattr(lp, func_name), f"Function {func_name} is not importable"
+            assert hasattr(mp, func_name), f"Function {func_name} is not importable"
 
 
 class TestRosterActionEnum:
@@ -146,7 +146,7 @@ class TestRosterChangesAPI:
         """Test basic get_roster_changes call returns properly parsed RosterChange objects."""
         mock_leaguepedia_query.return_value = roster_changes_mock_data
         
-        changes = lp.get_roster_changes()
+        changes = mp.get_roster_changes()
         
         assert len(changes) == 2
         assert all(isinstance(c, RosterChange) for c in changes)
@@ -163,7 +163,7 @@ class TestRosterChangesAPI:
         filtered_data = [roster_changes_mock_data[0]]
         mock_leaguepedia_query.return_value = filtered_data
         
-        changes = lp.get_roster_changes(team=TestConstants.TEAM_T1)
+        changes = mp.get_roster_changes(team=TestConstants.TEAM_T1)
         
         assert len(changes) == 1
         assert changes[0].team == TestConstants.TEAM_T1
@@ -179,7 +179,7 @@ class TestRosterChangesAPI:
         filtered_data = [roster_changes_mock_data[0]]
         mock_leaguepedia_query.return_value = filtered_data
         
-        changes = lp.get_roster_changes(player=TestConstants.PLAYER_FAKER)
+        changes = mp.get_roster_changes(player=TestConstants.PLAYER_FAKER)
         
         assert len(changes) == 1
         assert changes[0].player == TestConstants.PLAYER_FAKER
@@ -195,7 +195,7 @@ class TestRosterChangesAPI:
         filtered_data = [roster_changes_mock_data[0]]
         mock_leaguepedia_query.return_value = filtered_data
         
-        changes = lp.get_roster_changes(action="Join")
+        changes = mp.get_roster_changes(action="Join")
         
         assert len(changes) == 1
         assert changes[0].action == "Join"
@@ -211,7 +211,7 @@ class TestRosterChangesAPI:
         
         start_date = "2013-01-01"
         end_date = "2013-12-31"
-        changes = lp.get_roster_changes(start_date=start_date, end_date=end_date)
+        changes = mp.get_roster_changes(start_date=start_date, end_date=end_date)
         
         assert len(changes) == 2
         mock_leaguepedia_query.assert_called_once()
@@ -226,7 +226,7 @@ class TestRosterChangesAPI:
         filtered_data = [roster_changes_mock_data[0]]
         mock_leaguepedia_query.return_value = filtered_data
         
-        changes = lp.get_team_roster_changes(TestConstants.TEAM_T1)
+        changes = mp.get_team_roster_changes(TestConstants.TEAM_T1)
         
         assert len(changes) == 1
         assert changes[0].team == TestConstants.TEAM_T1
@@ -238,7 +238,7 @@ class TestRosterChangesAPI:
         filtered_data = [roster_changes_mock_data[0]]
         mock_leaguepedia_query.return_value = filtered_data
         
-        changes = lp.get_player_roster_changes(TestConstants.PLAYER_FAKER)
+        changes = mp.get_player_roster_changes(TestConstants.PLAYER_FAKER)
         
         assert len(changes) == 1
         assert changes[0].player == TestConstants.PLAYER_FAKER
@@ -255,7 +255,7 @@ class TestRosterChangesAPI:
         
         mock_leaguepedia_query.return_value = roster_changes_mock_data
         
-        changes = lp.get_recent_roster_changes(days=30)
+        changes = mp.get_recent_roster_changes(days=30)
         
         assert len(changes) == 2
         mock_leaguepedia_query.assert_called_once()
@@ -272,7 +272,7 @@ class TestRosterChangesAPI:
         filtered_data = [roster_changes_mock_data[0]]
         mock_leaguepedia_query.return_value = filtered_data
         
-        additions = lp.get_roster_additions()
+        additions = mp.get_roster_additions()
         
         assert len(additions) == 1
         assert additions[0].action == "Join"
@@ -288,7 +288,7 @@ class TestRosterChangesAPI:
         filtered_data = [roster_changes_mock_data[1]]
         mock_leaguepedia_query.return_value = filtered_data
         
-        removals = lp.get_roster_removals()
+        removals = mp.get_roster_removals()
         
         assert len(removals) == 1
         assert removals[0].action == "Leave"
@@ -310,7 +310,7 @@ class TestRosterChangesAPI:
         }]
         mock_leaguepedia_query.return_value = retirement_data
         
-        retirements = lp.get_retirements()
+        retirements = mp.get_retirements()
         
         assert len(retirements) == 1
         assert retirements[0].player == 'RetiredPlayer'
@@ -329,7 +329,7 @@ class TestRosterChangesErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
         
         with pytest.raises(RuntimeError, match="Failed to fetch roster changes"):
-            lp.get_roster_changes()
+            mp.get_roster_changes()
     
     @pytest.mark.integration
     def test_get_retirements_api_error(self, mock_leaguepedia_query):
@@ -337,14 +337,14 @@ class TestRosterChangesErrorHandling:
         mock_leaguepedia_query.side_effect = Exception("API connection failed")
         
         with pytest.raises(RuntimeError, match="Failed to fetch retirements"):
-            lp.get_retirements()
+            mp.get_retirements()
     
     @pytest.mark.integration
     def test_get_roster_changes_empty_response(self, mock_leaguepedia_query):
         """Test handling of empty API response."""
         mock_leaguepedia_query.return_value = []
         
-        changes = lp.get_roster_changes()
+        changes = mp.get_roster_changes()
         
         assert changes == []
         assert isinstance(changes, list)
@@ -388,7 +388,7 @@ class TestRosterChangesEdgeCases:
         malicious_input = "'; DROP TABLE RosterChanges; --"
         
         # Should not raise an exception and should escape the input
-        changes = lp.get_roster_changes(team=malicious_input)
+        changes = mp.get_roster_changes(team=malicious_input)
         
         # Verify the input was escaped (single quotes doubled)
         call_kwargs = mock_leaguepedia_query.call_args[1]
@@ -417,7 +417,7 @@ class TestRosterChangesEdgeCases:
         
         mock_leaguepedia_query.return_value = roster_changes_mock_data
         
-        changes = lp.get_recent_roster_changes(days=7)  # Last 7 days
+        changes = mp.get_recent_roster_changes(days=7)  # Last 7 days
         
         call_kwargs = mock_leaguepedia_query.call_args[1]
         assert "Date_Sort >= '2023-12-08'" in call_kwargs['where']  # 7 days before 2023-12-15

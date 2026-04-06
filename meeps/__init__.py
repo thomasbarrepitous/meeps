@@ -1,5 +1,14 @@
 __version__ = "0.2.0"
 
+# Cache utilities
+from meeps.cache import (
+    enable_cache,
+    disable_cache,
+    clear_cache,
+    get_cache_info,
+    is_cache_enabled,
+)
+
 from meeps.parsers.game_parser import (
     get_regions,
     get_tournaments,
